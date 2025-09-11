@@ -1,5 +1,3 @@
-import PartnersMarquee from "./home/partners/PartnersMarquee";
-import ContactSection from "./home/contact/ContactSection";
 // Re-exporta los DEFAULT como NOMBRES
 export { default as Navbar } from "./ui/navbar/Navbar";
 export { default as Drawer } from "./ui/sidebar/Drawer";

@@ -3,6 +3,7 @@
 import { useRef, useId } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, A11y } from "swiper/modules";
+import type { Swiper as SwiperInstance } from "swiper";
 import Image from "next/image";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -35,7 +36,7 @@ export default function HeroCarousel({
 
   return (
     <div className="relative w-full overflow-hidden rounded-xl md:rounded-2xl">
-      {/* Flechas sutiles, sin fondo */}
+      {/* Flecha izquierda (sutil, sin fondo) */}
       <button
         ref={prevRef}
         aria-label="Anterior"
@@ -52,6 +53,8 @@ export default function HeroCarousel({
           />
         </svg>
       </button>
+
+      {/* Flecha derecha (sutil, sin fondo) */}
       <button
         ref={nextRef}
         aria-label="Siguiente"
@@ -74,13 +77,19 @@ export default function HeroCarousel({
         autoplay={{ delay: 3800, disableOnInteraction: false }}
         loop
         speed={600}
-        pagination={false as any}
-        navigation={{ prevEl: prevRef.current, nextEl: nextRef.current }}
-        onBeforeInit={(swiper) => {
-          // @ts-ignore
-          swiper.params.navigation.prevEl = prevRef.current;
-          // @ts-ignore
-          swiper.params.navigation.nextEl = nextRef.current;
+        navigation={{
+          prevEl: prevRef.current,
+          nextEl: nextRef.current,
+        }}
+        onBeforeInit={(swiper: SwiperInstance) => {
+          // navigation puede ser boolean | NavigationOptions → hacemos type guard
+          if (
+            swiper.params.navigation &&
+            typeof swiper.params.navigation !== "boolean"
+          ) {
+            swiper.params.navigation.prevEl = prevRef.current;
+            swiper.params.navigation.nextEl = nextRef.current;
+          }
         }}
         onInit={(swiper) => {
           swiper.navigation.init();
