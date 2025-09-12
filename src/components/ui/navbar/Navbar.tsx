@@ -8,7 +8,7 @@ import Drawer from "../sidebar/Drawer";
 
 const links = [
   { href: "/cordoba-en-datos", label: "Córdoba en datos" },
-  { href: "#services", label: "Servicios" },
+  { href: "/#services", label: "Servicios" },
   { href: "/publicaciones", label: "Publicaciones" },
 ];
 

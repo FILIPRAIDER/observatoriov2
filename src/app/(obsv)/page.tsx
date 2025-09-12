@@ -1,5 +1,4 @@
 import {
-  Navbar,
   Hero,
   WhatWeDo,
   FeaturedPublications,
@@ -9,7 +8,6 @@ import {
   Investigators,
   FaqSection,
   ContactSection,
-  Footer,
 } from "@/components";
 import PartnersMarquee from "@/components/home/partners/PartnersMarquee";
 import FadeIn from "@/components/ui/animation/FadeIn";

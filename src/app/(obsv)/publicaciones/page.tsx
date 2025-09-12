@@ -1,6 +1,6 @@
 export const revalidate = 0; // fuerza datos frescos en cada request
 
-import { Navbar, Footer, PublicationsSection } from "@/components";
+import { PublicationsSection } from "@/components";
 
 export default function PublicacionesPage() {
   return (
