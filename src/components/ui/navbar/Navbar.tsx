@@ -7,8 +7,8 @@ import { Logo } from "../logo/Logo";
 import Drawer from "../sidebar/Drawer";
 
 const links = [
-  { href: "/datos", label: "Córdoba en datos" },
-  { href: "/servicios", label: "Servicios" },
+  { href: "/cordoba-en-datos", label: "Córdoba en datos" },
+  { href: "#services", label: "Servicios" },
   { href: "/publicaciones", label: "Publicaciones" },
 ];
 

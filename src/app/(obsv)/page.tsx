@@ -17,7 +17,6 @@ import FadeIn from "@/components/ui/animation/FadeIn";
 export default function HomePage() {
   return (
     <>
-      <Navbar />
       <main className="max-w-[1200px] mx-auto">
         <Hero /> {/* El hero puede entrar sin fade */}
         <FadeIn>
@@ -48,7 +47,6 @@ export default function HomePage() {
           <ContactSection />
         </FadeIn>
       </main>
-      <Footer />
     </>
   );
 }

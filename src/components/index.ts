@@ -31,3 +31,8 @@ export { default as FaqSection } from "./home/faq/Faq";
 export { default as ContactSection } from "./home/contact/ContactSection";
 // src/components/index.ts
 export { default as Footer } from "./ui/footer/Footer";
+
+export { default as CordobaEnDatosSection } from "./cordoba/CordobaEnDatosSection";
+export { default as PowerBIPlaceholder } from "./cordoba/powerbi/PowerBIPlaceholder";
+export { default as PublicationsSection } from "./publications/list/PublicationsSection";
+export { default as PublicationListItem } from "./publications/list/PublicationListItem";

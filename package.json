@@ -3,12 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "bunx prisma generate",
     "dev": "next dev --turbopack",
+    "prebuild": "bunx prisma generate",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "bunx prisma generate",
+    "prisma:generate": "bunx prisma generate",
+    "prisma:migrate:deploy": "bunx prisma migrate deploy"
   },
   "dependencies": {
+    "@prisma/client": "^6.16.1",
     "@react-google-maps/api": "^2.20.7",
     "clsx": "^2.1.1",
     "embla-carousel-auto-scroll": "^8.6.0",
@@ -21,20 +27,23 @@
     "swiper": "^11.2.10"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
-    "@eslint/eslintrc": "^3"
+    "prisma": "^6.16.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   },
-   
   "trustedDependencies": [
     "@swc/core",
     "sharp"
-  ]
+  ],
+  "engines": {
+    "bun": ">=1.1.0"
+  },
+  "packageManager": "bun@1.1.20"
 }
-  
