@@ -59,7 +59,7 @@ export default function Navbar() {
             </Link>
           ))}
           <Link
-            href="#Contactanos"
+            href="/#Contactanos"
             className="inline-flex items-center rounded-full bg-[#17594A] border border-gray-300 px-4 py-2 text-sm font-medium  text-white transition"
           >
             Contáctanos
@@ -125,7 +125,7 @@ export default function Navbar() {
 
           <div className="px-4 pb-6">
             <Link
-              href="#Contactanos"
+              href="/#Contactanos"
               onClick={() => setOpen(false)}
               className="block w-full rounded-full border px-4 py-3 text-center font-medium hover:bg-black hover:text-white transition"
             >

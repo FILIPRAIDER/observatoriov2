@@ -1,4 +1,4 @@
-import { Navbar, Footer, CordobaEnDatosSection } from "@/components";
+import { CordobaEnDatosSection } from "@/components";
 
 export default function CordobaEnDatosPage() {
   return (
