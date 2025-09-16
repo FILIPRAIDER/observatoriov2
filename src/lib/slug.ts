@@ -8,3 +8,8 @@ export function slugify(str: string) {
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
 }
+
+export function deslugify(slug: string) {
+  // aproximación para consulta: reemplaza "-" por espacio
+  return slug.replace(/-/g, " ").trim();
+}

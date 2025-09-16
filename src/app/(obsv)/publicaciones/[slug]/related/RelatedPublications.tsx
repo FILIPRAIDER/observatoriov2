@@ -6,7 +6,7 @@ export default async function RelatedPublications({
 }: {
   currentSlug: string;
 }) {
-  const pubs = await getFeaturedPublications();
+  const pubs = await getFeaturedPublications(4);
   const filtered = pubs.filter((p) => p.slug !== currentSlug).slice(0, 3);
 
   return (
@@ -14,7 +14,6 @@ export default async function RelatedPublications({
       <h2 className="mb-6 text-2xl sm:text-3xl font-extrabold">
         Mas Noticias relacionadas
       </h2>
-
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((p) => (
           <PublicationCard key={p.id} pub={p} />

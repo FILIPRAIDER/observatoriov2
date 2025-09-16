@@ -165,7 +165,7 @@ export default function ContactSection() {
             <div className="pt-2">
               <button
                 type="button"
-                className="inline-flex w-full items-center justify-center rounded-2xl bg-[#17594A] px-6 py-3.5 text-white font-semibold hover:bg-emerald-800 transition"
+                className="cursor-pointer inline-flex w-full items-center justify-center rounded-2xl bg-[#17594A] px-6 py-3.5 text-white font-semibold hover:bg-emerald-800 transition"
               >
                 Enviar
               </button>

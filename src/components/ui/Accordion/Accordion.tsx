@@ -32,7 +32,7 @@ export default function Accordion({
               aria-expanded={isOpen}
               aria-controls={panelId}
               onClick={() => setOpen(isOpen ? null : i)}
-              className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
+              className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left cursor-pointer"
             >
               <span className="text-[15px] sm:text-base font-medium text-gray-900">
                 {it.title}
@@ -40,7 +40,7 @@ export default function Accordion({
               <span
                 aria-hidden
                 className={clsx(
-                  "inline-flex h-6 w-6 items-center justify-center rounded-md font-bold text-gray-700",
+                  "inline-flex h-6 w-6 items-center justify-center rounded-md font-bold text-gray-700 cursor-pointer",
                   isOpen ? "bg-gray-50" : "bg-white"
                 )}
               >

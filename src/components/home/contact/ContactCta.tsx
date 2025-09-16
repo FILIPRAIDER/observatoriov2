@@ -28,7 +28,7 @@ export default function ContactCta() {
           noValidate
         >
           {/* grid 3 columnas; la 3ra más ancha para el botón */}
-          <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-[1fr_1fr_1.6fr]">
+          <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-[1.5fr_1.5fr_1fr]">
             {/* Nombre */}
             <div className="space-y-1.5">
               <label htmlFor="contact-name" className="text-sm text-gray-600">
@@ -61,7 +61,7 @@ export default function ContactCta() {
             <div className="flex items-end">
               <button
                 type="submit"
-                className="inline-flex w-full items-center justify-center rounded-2xl bg-[#17594A] px-6 py-3.5 text-white font-semibold hover:bg-emerald-800 transition"
+                className="cursor-pointer inline-flex w-full items-center justify-center rounded-2xl bg-[#17594A] px-6 py-3.5 text-white font-semibold hover:bg-emerald-800 transition"
                 aria-label="Enviar solicitud"
               >
                 Enviar

@@ -40,7 +40,7 @@ export default function HeroCarousel({
       <button
         ref={prevRef}
         aria-label="Anterior"
-        className="absolute left-2 top-1/2 z-20 -translate-y-1/2 p-2 text-white/60 hover:text-white transition"
+        className="absolute left-2 top-1/2 z-20 -translate-y-1/2 p-2 text-white/60 hover:text-white transition cursor-pointer"
       >
         <svg width="26" height="26" viewBox="0 0 24 24" className="drop-shadow">
           <path
@@ -58,7 +58,7 @@ export default function HeroCarousel({
       <button
         ref={nextRef}
         aria-label="Siguiente"
-        className="absolute right-2 top-1/2 z-20 -translate-y-1/2 p-2 text-white/60 hover:text-white transition"
+        className="absolute right-2 top-1/2 z-20 -translate-y-1/2 p-2 text-white/60 hover:text-white transition cursor-pointer"
       >
         <svg width="26" height="26" viewBox="0 0 24 24" className="drop-shadow">
           <path

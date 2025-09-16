@@ -2,7 +2,7 @@ import { getFeaturedPublications } from "@/app/actions/getFeaturedPublications";
 import PublicationCard from "@/components/publications/PublicationCard";
 
 export default async function FeaturedPublications() {
-  const pubs = await getFeaturedPublications();
+  const pubs = await getFeaturedPublications(4); // ⬅️ pide exactamente 4
 
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 md:py-14 mt-30">
