@@ -3,20 +3,77 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getPublicationBySlugDB } from "@/lib/queries/publications";
 import RelatedPublications from "./related/RelatedPublications";
+import { formatISOLongUTC } from "@/lib/dates"; // ⟵ ¡UTC-safe!
 
 // Meta dinámica
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-function formatDateLongSafe(iso: string) {
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return iso;
-  return new Intl.DateTimeFormat("es-CO", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(d);
+/** Renderiza párrafos y listas cuando hay “•” */
+function ArticleBody({ text }: { text: string }) {
+  const normalized = text.replace(/\r\n?/g, "\n").trim();
+  if (!normalized) return null;
+
+  // Cortamos en bloques por 1+ líneas en blanco
+  const blocks = normalized.split(/\n{2,}/);
+
+  return (
+    <div className="mx-auto mt-6 max-w-4xl text-[15px] leading-7 text-neutral-700">
+      {blocks.map((block, i) => {
+        const hasBullets = block.includes("•");
+
+        if (!hasBullets) {
+          // Párrafo normal: respeta \n internos (líneas cortas)
+          return (
+            <p
+              key={`p-${i}`}
+              className={i === 0 ? "" : "mt-4"}
+              style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+            >
+              {block}
+            </p>
+          );
+        }
+
+        // Hay viñetas con “•”. Separa texto inicial e items.
+        const parts = block.split("•").map((s) => s.trim());
+        const lead = parts.shift() ?? "";
+        const items = parts
+          .map((s) => s.replace(/^[\-\u2022]\s*/, "").trim())
+          .filter(Boolean);
+
+        return (
+          <div key={`blk-${i}`} className={i === 0 ? "" : "mt-4"}>
+            {lead && (
+              <p
+                className="mb-2"
+                style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+              >
+                {lead}
+              </p>
+            )}
+            {items.length > 0 && (
+              <ul className="list-disc pl-6 space-y-1">
+                {items.map((it, j) => (
+                  <li key={`li-${i}-${j}`} className="marker:text-neutral-700">
+                    <span
+                      style={{
+                        whiteSpace: "pre-wrap",
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      {it}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -77,6 +134,7 @@ export default async function PublicationDetailPage({ params }: Props) {
 
   return (
     <main className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8 sm:py-10">
+      {/* Back */}
       <Link
         href="/publicaciones"
         className="inline-flex items-center gap-2 text-neutral-700"
@@ -98,6 +156,7 @@ export default async function PublicationDetailPage({ params }: Props) {
         Volver a publicaciones
       </Link>
 
+      {/* Imagen principal */}
       <div className="mx-auto mt-6 max-w-4xl">
         <div className="relative h-[220px] sm:h-[360px] w-full overflow-hidden rounded-2xl">
           <Image
@@ -110,37 +169,24 @@ export default async function PublicationDetailPage({ params }: Props) {
           />
         </div>
 
+        {/* Tag + fecha */}
         <div className="mt-2 flex items-center justify-between text-[13px]">
           <span className="text-neutral-500">{pub.tag}</span>
           <time className="text-neutral-500">
-            {formatDateLongSafe(pub.dateISO)}
+            {formatISOLongUTC(pub.dateISO)} {/* ⟵ fecha correcta en UTC */}
           </time>
         </div>
       </div>
 
+      {/* Título */}
       <h1 className="mx-auto mt-6 max-w-4xl text-center text-[26px] sm:text-[32px] font-extrabold text-neutral-900 leading-tight">
         {pub.title}
       </h1>
 
-      <article className="mx-auto mt-6 max-w-4xl text-[15px] leading-7 text-neutral-700">
-        {pub.content && <p className="mb-4">{pub.content}</p>}
-        {/* {pub.content?.map((b, i) => {
-          if (!b.content) return null;
-          if (b.kind === "quote") {
-            return (
-              <p key={i} className="mt-4 italic">
-                {b.content}
-              </p>
-            );
-          }
-          return (
-            <p key={i} className="mt-4">
-              {b.content}
-            </p>
-          );
-        })} */}
-      </article>
+      {/* Cuerpo (párrafos + listas) */}
+      {pub.content ? <ArticleBody text={pub.content} /> : null}
 
+      {/* Relacionadas */}
       <RelatedPublications currentSlug={pub.slug} />
     </main>
   );

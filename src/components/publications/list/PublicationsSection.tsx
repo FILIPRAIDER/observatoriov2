@@ -1,9 +1,10 @@
+// src/components/publications/list/PublicationsSection.tsx
 "use client";
 
 import { useEffect, useRef, useState, useCallback, useTransition } from "react";
 import FadeIn from "@/components/ui/animation/FadeIn";
-import { fetchPublicationsPage } from "@/app/actions/publications";
 import PublicationListItem from "./PublicationListItem";
+import { fetchPublicationsPage } from "@/app/actions/publications";
 
 type Item = {
   id: string;
@@ -39,62 +40,54 @@ function SkeletonItem() {
 
 export default function PublicationsSection() {
   const [items, setItems] = useState<Item[]>([]);
+  const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [isPending, startTransition] = useTransition();
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-
-  // refs para evitar llamadas paralelas y llevar el offset
-  const offsetRef = useRef(0);
-  const fetchingRef = useRef(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const load = useCallback(async () => {
-    if (fetchingRef.current || !hasMore) return;
-    fetchingRef.current = true;
+    if (!hasMore || isLoadingMore) return;
     setIsLoadingMore(true);
-
-    const res = await fetchPublicationsPage({
-      offset: offsetRef.current,
-      limit: LIMIT,
-    });
+    const res = await fetchPublicationsPage({ offset, limit: LIMIT });
 
     setItems((prev) => {
-      // de-dupe por id por si el backend devolviera repetidos
-      const seen = new Set(prev.map((x) => x.id));
-      const add = res.items.filter((x) => !seen.has(x.id));
-      return [...prev, ...add];
+      // merge + de-dupe por id
+      const merged = [...prev, ...res.items];
+      const map = new Map<string, Item>();
+      for (const it of merged) map.set(it.id, it);
+      return Array.from(map.values());
     });
 
-    offsetRef.current = res.nextOffset;
+    setOffset((prev) => prev + res.items.length);
     setHasMore(res.hasMore);
     setIsLoadingMore(false);
-    fetchingRef.current = false;
-  }, [hasMore]);
+  }, [offset, hasMore, isLoadingMore]);
 
-  // primera carga
   useEffect(() => {
     startTransition(() => {
-      void load();
+      load();
     });
-  }, [load, startTransition]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // infinite scroll
   useEffect(() => {
     if (!sentinelRef.current) return;
     const io = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) void load();
+      ([entry]) => {
+        if (entry.isIntersecting && hasMore && !isLoadingMore) {
+          load();
+        }
       },
       { rootMargin: "300px 0px" }
     );
     io.observe(sentinelRef.current);
     return () => io.disconnect();
-  }, [load]);
+  }, [load, hasMore, isLoadingMore]);
 
   return (
     <FadeIn>
       <section className="w-full py-10 sm:py-12">
-        {/* Título + subtítulo */}
         <div className="mb-8 text-center">
           <h1 className="text-[22px] sm:text-[24px] font-semibold text-neutral-900">
             Publicaciones
@@ -104,7 +97,6 @@ export default function PublicationsSection() {
           </p>
         </div>
 
-        {/* Barra superior (dummy) */}
         <div className="mb-4 flex items-center justify-end gap-2">
           <span className="text-[14px] text-neutral-600">Buscador</span>
           <button
@@ -112,6 +104,7 @@ export default function PublicationsSection() {
             aria-label="Buscar"
             className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-neutral-300 text-neutral-700"
           >
+            {/* icono lupa */}
             <svg
               width="18"
               height="18"
@@ -136,13 +129,10 @@ export default function PublicationsSection() {
           </button>
         </div>
 
-        {/* Lista */}
         <div className="flex flex-col gap-5">
-          {items.map((it) => {
-            const { slug, ...p } = it;
-            // key estable por slug para evitar colisiones
-            return <PublicationListItem key={slug} {...p} />;
-          })}
+          {items.map((p) => (
+            <PublicationListItem key={p.id} {...p} />
+          ))}
 
           {(isPending || isLoadingMore) &&
             Array.from({ length: 2 }).map((_, i) => (
@@ -150,7 +140,6 @@ export default function PublicationsSection() {
             ))}
         </div>
 
-        {/* CTA: Ver más (fallback accesible) */}
         <div className="mt-10 flex justify-center">
           {hasMore ? (
             <button
@@ -167,7 +156,6 @@ export default function PublicationsSection() {
           )}
         </div>
 
-        {/* Sentinel para infinite scroll */}
         <div ref={sentinelRef} className="h-1 w-full" />
       </section>
     </FadeIn>

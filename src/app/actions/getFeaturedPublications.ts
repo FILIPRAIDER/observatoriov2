@@ -1,3 +1,4 @@
+// src/app/actions/getFeaturedPublications.ts
 "use server";
 
 import { prisma } from "@/lib/prisma";
@@ -9,7 +10,7 @@ export type Publication = {
   slug: string;
   title: string;
   category: string;
-  publishedAt: string; // ISO
+  publishedAt: string; // ISO (00:00:00Z)
   imageUrl: string;
   imageAlt?: string;
 };
@@ -21,7 +22,6 @@ const FALLBACKS = [
   "https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=1600&q=60",
 ];
 
-// cache por “limit” (clave distinta por cada valor)
 function _getFeatured(limit: number) {
   return cache(
     async () => {
@@ -46,6 +46,7 @@ function _getFeatured(limit: number) {
           ] ??
           FALLBACKS[idx % FALLBACKS.length];
 
+        // Prisma DATE -> ISO (UTC). Formatear SIEMPRE en UTC del lado UI.
         const iso =
           r.publication_date instanceof Date
             ? r.publication_date.toISOString()
@@ -63,10 +64,7 @@ function _getFeatured(limit: number) {
       });
     },
     [`publications:featured:${limit}`],
-    {
-      revalidate: 300, // 5 min
-      tags: ["publications:featured"],
-    }
+    { revalidate: 300, tags: ["publications:featured"] }
   )();
 }
 

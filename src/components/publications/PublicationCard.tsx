@@ -1,14 +1,8 @@
+// src/components/publications/PublicationCard.tsx
 import Image from "next/image";
 import Link from "next/link";
 import type { Publication } from "@/app/actions/getFeaturedPublications";
-
-function formatDate(iso: string) {
-  return new Intl.DateTimeFormat("es-CO", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  }).format(new Date(iso));
-}
+import { formatISOShortUTC } from "@/lib/dates";
 
 export default function PublicationCard({ pub }: { pub: Publication }) {
   return (
@@ -32,7 +26,7 @@ export default function PublicationCard({ pub }: { pub: Publication }) {
 
           <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
             <time dateTime={pub.publishedAt}>
-              {formatDate(pub.publishedAt)}
+              {formatISOShortUTC(pub.publishedAt)} {/* dd/mm/yyyy correcto */}
             </time>
             <span className="rounded-full bg-gray-100 px-2 py-1 text-[11px]">
               {pub.category}

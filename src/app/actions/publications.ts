@@ -1,29 +1,16 @@
+// src/app/actions/publications.ts
 "use server";
 
 import { prisma } from "@/lib/prisma";
 import { unstable_cache as cache } from "next/cache";
-import { slugify } from "@/lib/slug";
-
-function ddmmyyyy(date: Date) {
-  const d = String(date.getDate()).padStart(2, "0");
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const y = String(date.getFullYear());
-  return `${d}/${m}/${y}`;
-}
-
-const FALLBACKS = [
-  "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1600&q=60",
-  "https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?auto=format&fit=crop&w=1600&q=60",
-  "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1600&q=60",
-  "https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=1600&q=60",
-];
+import { toYMD, ymdToDMY } from "@/lib/dates";
 
 export type PublicationsPageItem = {
   id: string;
   title: string;
   excerpt: string;
   tag: string;
-  date: string; // dd/mm/yyyy
+  date: string; // dd/mm/yyyy (derivado de YYYY-MM-DD, sin problemas de tz)
   img: string;
   alt: string;
   slug: string;
@@ -35,10 +22,35 @@ export type PublicationsPageResult = {
   nextOffset: number;
 };
 
-// caché por página (offset+limit)
-function _pageCached(offset: number, limit: number) {
-  return cache(
-    async (): Promise<PublicationsPageResult> => {
+function slugify(s: string) {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+}
+
+// Fallbacks por si alguna publicación aún no tiene imagen
+const FALLBACKS = [
+  "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1600&q=60",
+  "https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?auto=format&fit=crop&w=1600&q=60",
+  "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1600&q=60",
+  "https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=1600&q=60",
+];
+
+export async function fetchPublicationsPage({
+  offset,
+  limit,
+}: {
+  offset: number;
+  limit: number;
+}): Promise<PublicationsPageResult> {
+  // clave dinámica por página
+  const key = `publications:list:${offset}:${limit}`;
+
+  const run = cache(
+    async () => {
       const rows = await prisma.publications.findMany({
         include: {
           publication_types: { select: { name: true } },
@@ -61,17 +73,16 @@ function _pageCached(offset: number, limit: number) {
           ] ??
           FALLBACKS[idx % FALLBACKS.length];
 
-        const dateObj =
-          r.publication_date instanceof Date
-            ? r.publication_date
-            : new Date(r.publication_date as unknown as string);
+        // ⚠️ aquí el fix: tomamos 'YYYY-MM-DD' en UTC y lo convertimos a dd/mm/yyyy
+        const ymd = toYMD(r.publication_date);
+        const dateDMY = ymdToDMY(ymd);
 
         return {
-          id: r.id.toString(),
+          id: r.id.toString(), // único y estable
           title: r.title,
           excerpt: (r.abstract ?? "").trim(),
           tag: r.publication_types?.name ?? "Publicación",
-          date: ddmmyyyy(dateObj),
+          date: dateDMY,
           img,
           alt: r.images?.[0]?.alt ?? r.title,
           slug: slugify(r.title),
@@ -84,17 +95,9 @@ function _pageCached(offset: number, limit: number) {
         nextOffset: offset + items.length,
       };
     },
-    [`publications:list:${offset}:${limit}`],
-    {
-      revalidate: 300, // 5 min (puedes bajar a 180 si quieres 3 min)
-      tags: ["publications:list"],
-    }
-  )();
-}
+    [key],
+    { revalidate: 300, tags: ["publications:list"] } // 5 min
+  );
 
-export async function fetchPublicationsPage(opts: {
-  offset: number;
-  limit: number;
-}): Promise<PublicationsPageResult> {
-  return _pageCached(opts.offset, opts.limit);
+  return run();
 }
