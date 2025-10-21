@@ -94,6 +94,18 @@ export type PublicationDetailDTO = {
   content?: string;
   author?: { firstName: string; lastName: string; organization?: string };
   slug: string;
+  // PDF fields
+  hasPdf: boolean;
+  pdfUrl?: string;
+  pdfSize?: number;
+  pdfName?: string;
+  // Additional fields
+  isFeatured: boolean;
+  keywords?: string;
+  externalUrl?: string;
+  eventDate?: string;
+  submissionDeadline?: string;
+  registrationDeadline?: string;
 };
 
 export async function getPublicationBySlugDB(
@@ -149,5 +161,17 @@ export async function getPublicationBySlugDB(
         }
       : undefined,
     slug,
+    // PDF fields
+    hasPdf: !!row.pdf_url,
+    pdfUrl: row.pdf_url ?? undefined,
+    pdfSize: row.pdf_size ? Number(row.pdf_size) : undefined,
+    pdfName: row.pdf_original_name ?? undefined,
+    // Additional fields
+    isFeatured: row.is_featured,
+    keywords: row.keywords ?? undefined,
+    externalUrl: row.external_url ?? undefined,
+    eventDate: row.event_date?.toISOString(),
+    submissionDeadline: row.submission_deadline?.toISOString(),
+    registrationDeadline: row.registration_deadline?.toISOString(),
   };
 }

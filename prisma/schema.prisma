@@ -101,30 +101,50 @@ model authors {
 }
 
 model publication_types {
-  id           BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
-  name         String         @db.VarChar(255)
-  description  String         @db.Text
-  created_at   DateTime?      @db.Timestamp(0)
-  updated_at   DateTime?      @db.Timestamp(0)
-  publications publications[]
+  id              BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
+  name            String         @db.VarChar(255)
+  description     String         @db.Text
+  allows_pdf      Boolean        @default(true)
+  requires_pdf    Boolean        @default(false)
+  has_event_dates Boolean        @default(false)
+  icon            String?        @db.VarChar(255)
+  color           String?        @db.VarChar(50)
+  sort_order      Int            @default(0)
+  created_at      DateTime?      @db.Timestamp(0)
+  updated_at      DateTime?      @db.Timestamp(0)
+  publications    publications[]
+
+  @@index([sort_order], map: "idx_publication_types_sort_order")
 }
 
 model publications {
-  id                  BigInt            @id @default(autoincrement()) @db.UnsignedBigInt
-  title               String            @db.VarChar(255)
-  abstract            String            @db.Text
-  content             String            @db.LongText
-  publication_date    DateTime          @db.Date
-  author_id           BigInt            @db.UnsignedBigInt
-  publication_type_id BigInt            @db.UnsignedBigInt
-  created_at          DateTime?         @db.Timestamp(0)
-  updated_at          DateTime?         @db.Timestamp(0)
-  images              images[]
-  authors             authors           @relation(fields: [author_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "publications_author_id_foreign")
-  publication_types   publication_types @relation(fields: [publication_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "publications_publication_type_id_foreign")
+  id                    BigInt            @id @default(autoincrement()) @db.UnsignedBigInt
+  title                 String            @db.VarChar(255)
+  abstract              String            @db.Text
+  content               String            @db.LongText
+  pdf_url               String?           @db.VarChar(500)
+  pdf_file_id           String?           @db.VarChar(255)
+  pdf_original_name     String?           @db.VarChar(255)
+  pdf_size              BigInt?           @db.UnsignedBigInt
+  event_date            DateTime?         @db.Date
+  submission_deadline   DateTime?         @db.Date
+  registration_deadline DateTime?         @db.Date
+  external_url          String?           @db.VarChar(500)
+  is_featured           Boolean           @default(false)
+  keywords              String?           @db.Text
+  publication_date      DateTime          @db.Date
+  author_id             BigInt            @db.UnsignedBigInt
+  publication_type_id   BigInt            @db.UnsignedBigInt
+  created_at            DateTime?         @db.Timestamp(0)
+  updated_at            DateTime?         @db.Timestamp(0)
+  images                images[]
+  authors               authors           @relation(fields: [author_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "publications_author_id_foreign")
+  publication_types     publication_types @relation(fields: [publication_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "publications_publication_type_id_foreign")
 
   @@index([author_id], map: "publications_author_id_foreign")
   @@index([publication_type_id], map: "publications_publication_type_id_foreign")
+  @@index([is_featured], map: "idx_publications_is_featured")
+  @@index([publication_date], map: "idx_publications_publication_date")
 }
 
 model images {

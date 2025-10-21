@@ -6,7 +6,7 @@
     "predev": "bunx prisma generate",
     "dev": "next dev --turbopack",
     "prebuild": "bunx prisma generate",
-    "build": "next build --turbopack",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "postinstall": "bunx prisma generate",

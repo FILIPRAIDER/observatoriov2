@@ -26,6 +26,10 @@ function _getFeatured(limit: number) {
   return cache(
     async () => {
       const rows = await prisma.publications.findMany({
+        // Primero intenta obtener las destacadas
+        where: {
+          is_featured: true,
+        },
         include: {
           publication_types: { select: { name: true } },
           images: {
@@ -38,7 +42,23 @@ function _getFeatured(limit: number) {
         take: limit,
       });
 
-      return rows.map((r, idx): Publication => {
+      // Si no hay destacadas, muestra las últimas publicaciones
+      const finalRows = rows.length === 0
+        ? await prisma.publications.findMany({
+            include: {
+              publication_types: { select: { name: true } },
+              images: {
+                take: 1,
+                orderBy: [{ sort_order: "asc" }, { id: "asc" }],
+                select: { url: true, alt: true },
+              },
+            },
+            orderBy: [{ publication_date: "desc" }, { id: "desc" }],
+            take: limit,
+          })
+        : rows;
+
+      return finalRows.map((r, idx): Publication => {
         const img =
           r.images?.[0]?.url ??
           FALLBACKS[

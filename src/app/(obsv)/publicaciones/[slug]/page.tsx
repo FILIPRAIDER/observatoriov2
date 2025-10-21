@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getPublicationBySlugDB } from "@/lib/queries/publications";
 import RelatedPublications from "./related/RelatedPublications";
 import { formatISOLongUTC } from "@/lib/dates"; // ⟵ ¡UTC-safe!
+import PDFDownloadButton from "@/components/publications/PDFDownloadButton";
 
 // Meta dinámica
 interface Props {
@@ -182,6 +183,120 @@ export default async function PublicationDetailPage({ params }: Props) {
       <h1 className="mx-auto mt-6 max-w-4xl text-center text-[26px] sm:text-[32px] font-extrabold text-neutral-900 leading-tight">
         {pub.title}
       </h1>
+
+      {/* Autor si existe */}
+      {pub.author && (
+        <div className="mx-auto mt-4 max-w-4xl text-center">
+          <p className="text-[14px] text-neutral-600">
+            Por{" "}
+            <span className="font-medium text-neutral-800">
+              {pub.author.firstName} {pub.author.lastName}
+            </span>
+            {pub.author.organization && (
+              <>
+                {" • "}
+                <span className="text-neutral-500">
+                  {pub.author.organization}
+                </span>
+              </>
+            )}
+          </p>
+        </div>
+      )}
+
+      {/* Keywords */}
+      {pub.keywords && (
+        <div className="mx-auto mt-3 max-w-4xl text-center">
+          <div className="flex flex-wrap justify-center gap-2">
+            {pub.keywords.split(",").map((keyword, idx) => (
+              <span
+                key={idx}
+                className="inline-block rounded-full bg-neutral-100 px-3 py-1 text-[12px] text-neutral-700"
+              >
+                {keyword.trim()}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Sección de descarga PDF */}
+      {pub.hasPdf && pub.pdfUrl && (
+        <div className="mx-auto mt-8 max-w-4xl">
+          <PDFDownloadButton
+            pdfUrl={pub.pdfUrl}
+            pdfName={pub.pdfName}
+            pdfSize={pub.pdfSize}
+            variant="card"
+          />
+        </div>
+      )}
+
+      {/* Fechas adicionales (para convocatorias/eventos) */}
+      {(pub.eventDate || pub.submissionDeadline || pub.registrationDeadline) && (
+        <div className="mx-auto mt-6 max-w-4xl rounded-xl border border-blue-200 bg-blue-50/50 p-6">
+          <h2 className="text-[16px] font-semibold text-neutral-900 mb-3">
+            📅 Fechas importantes
+          </h2>
+          <div className="space-y-2 text-[14px]">
+            {pub.eventDate && (
+              <div className="flex justify-between">
+                <span className="text-neutral-600">Fecha del evento:</span>
+                <span className="font-medium text-neutral-900">
+                  {formatISOLongUTC(pub.eventDate)}
+                </span>
+              </div>
+            )}
+            {pub.submissionDeadline && (
+              <div className="flex justify-between">
+                <span className="text-neutral-600">Fecha límite de envío:</span>
+                <span className="font-medium text-neutral-900">
+                  {formatISOLongUTC(pub.submissionDeadline)}
+                </span>
+              </div>
+            )}
+            {pub.registrationDeadline && (
+              <div className="flex justify-between">
+                <span className="text-neutral-600">
+                  Fecha límite de inscripción:
+                </span>
+                <span className="font-medium text-neutral-900">
+                  {formatISOLongUTC(pub.registrationDeadline)}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* URL externa */}
+      {pub.externalUrl && (
+        <div className="mx-auto mt-6 max-w-4xl text-center">
+          <a
+            href={pub.externalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-[14px] font-medium text-blue-600 hover:text-blue-700 transition-colors"
+          >
+            <span>Ver más información</span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M7 17L17 7m0 0H7m10 0v10"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </a>
+        </div>
+      )}
 
       {/* Cuerpo (párrafos + listas) */}
       {pub.content ? <ArticleBody text={pub.content} /> : null}
