@@ -92,7 +92,7 @@ export type PublicationDetailDTO = {
   excerpt?: string;
   // en el nuevo schema el contenido es un string completo
   content?: string;
-  author?: { firstName: string; lastName: string; organization?: string };
+  authors: Array<{ firstName: string; lastName: string; organization?: string }>;
   slug: string;
   // PDF fields
   hasPdf: boolean;
@@ -114,11 +114,16 @@ export async function getPublicationBySlugDB(
   const guess = deslugify(slug);
 
   const candidates = await prisma.publications.findMany({
-    where: { title: { contains: guess } }, // MySQL suele ser case-insensitive por collation
+    where: { title: { contains: guess } },
     include: {
       publication_types: { select: { name: true } },
-      authors: {
-        select: { first_name: true, last_name: true, organization: true },
+      author_publication: {
+        orderBy: { sort_order: "asc" },
+        include: {
+          authors: {
+            select: { first_name: true, last_name: true, organization: true },
+          },
+        },
       },
       images: {
         take: 1,
@@ -144,6 +149,12 @@ export async function getPublicationBySlugDB(
       ? row.publication_date
       : new Date(row.publication_date as unknown as string);
 
+  const authors = row.author_publication.map((ap) => ({
+    firstName: ap.authors.first_name,
+    lastName: ap.authors.last_name,
+    organization: ap.authors.organization,
+  }));
+
   return {
     id: row.id.toString(),
     title: row.title,
@@ -153,13 +164,7 @@ export async function getPublicationBySlugDB(
     alt: row.images?.[0]?.alt ?? row.title,
     excerpt: row.abstract ?? "",
     content: row.content ?? "",
-    author: row.authors
-      ? {
-          firstName: row.authors.first_name,
-          lastName: row.authors.last_name,
-          organization: row.authors.organization,
-        }
-      : undefined,
+    authors,
     slug,
     // PDF fields
     hasPdf: !!row.pdf_url,

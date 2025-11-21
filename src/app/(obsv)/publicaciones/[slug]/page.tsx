@@ -188,22 +188,24 @@ export default async function PublicationDetailPage({ params }: Props) {
         {pub.title}
       </h1>
 
-      {/* Autor si existe */}
-      {pub.author && (
+      {/* Autores */}
+      {pub.authors.length > 0 && (
         <div className="mx-auto mt-4 max-w-4xl text-center">
           <p className="text-[14px] text-neutral-600">
             Por{" "}
-            <span className="font-medium text-neutral-800">
-              {pub.author.firstName} {pub.author.lastName}
-            </span>
-            {pub.author.organization && (
-              <>
-                {" • "}
-                <span className="text-neutral-500">
-                  {pub.author.organization}
+            {pub.authors.map((author, idx) => (
+              <span key={idx}>
+                {idx > 0 && (idx === pub.authors.length - 1 ? " y " : ", ")}
+                <span className="font-medium text-neutral-800">
+                  {author.firstName} {author.lastName}
                 </span>
-              </>
-            )}
+                {author.organization && (
+                  <span className="text-neutral-500">
+                    {" "}({author.organization})
+                  </span>
+                )}
+              </span>
+            ))}
           </p>
         </div>
       )}
