@@ -14,7 +14,9 @@ export default function ContactCta() {
     // Prevenir múltiples ejecuciones simultáneas (React StrictMode en dev)
     if (isSubmitting || submittingRef.current) return;
 
-    const formData = new FormData(e.currentTarget);
+    // Guardar referencia al formulario antes de async
+    const form = e.currentTarget;
+    const formData = new FormData(form);
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
 
@@ -33,7 +35,7 @@ export default function ContactCta() {
         toast.success(result.message, {
           duration: 5000,
         });
-        e.currentTarget.reset();
+        form.reset();
       } else {
         toast.error(result.message);
       }

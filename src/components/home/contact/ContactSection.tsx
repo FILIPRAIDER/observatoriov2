@@ -18,7 +18,9 @@ function ContactForm({ cardClass, inputClass }: { cardClass: string; inputClass:
     // Prevenir múltiples ejecuciones simultáneas (React StrictMode en dev)
     if (isSubmitting || submittingRef.current) return;
 
-    const formData = new FormData(e.currentTarget);
+    // Guardar referencia al formulario antes de async
+    const form = e.currentTarget;
+    const formData = new FormData(form);
     const data = {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
@@ -42,7 +44,7 @@ function ContactForm({ cardClass, inputClass }: { cardClass: string; inputClass:
         toast.success(result.message, {
           duration: 5000,
         });
-        e.currentTarget.reset();
+        form.reset();
       } else {
         toast.error(result.message);
       }
