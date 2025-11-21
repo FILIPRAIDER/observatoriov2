@@ -12,6 +12,9 @@ import {
 import PartnersMarquee from "@/components/home/partners/PartnersMarquee";
 import FadeIn from "@/components/ui/animation/FadeIn";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default function HomePage() {
   return (
     <>

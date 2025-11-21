@@ -6,6 +6,10 @@ import RelatedPublications from "./related/RelatedPublications";
 import { formatISOLongUTC } from "@/lib/dates"; // ⟵ ¡UTC-safe!
 import PDFDownloadButton from "@/components/publications/PDFDownloadButton";
 
+// Deshabilitar generación estática durante build
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Meta dinámica
 interface Props {
   params: Promise<{ slug: string }>;

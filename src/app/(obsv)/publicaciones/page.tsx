@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 export const revalidate = 0; // fuerza datos frescos en cada request
 
 import { PublicationsSection } from "@/components";
