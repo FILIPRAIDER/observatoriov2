@@ -26,19 +26,19 @@ export default async function DashboardPage({
     <FadeIn>
       <div className="mx-auto max-w-[1400px] px-4 py-8 sm:px-6">
         {/* Breadcrumb */}
-        <nav className="mb-6 text-sm text-neutral-600 dark:text-neutral-400">
-          <Link href="/" className="hover:text-emerald-600 transition-colors">
+        <nav className="mb-8 flex items-center gap-2 text-sm">
+          <Link href="/" className="text-neutral-600 hover:text-emerald-600 transition-colors font-medium">
             Inicio
           </Link>
-          {" > "}
+          <span className="text-neutral-400">/</span>
           <Link
             href="/cordoba-en-datos"
-            className="hover:text-emerald-600 transition-colors"
+            className="text-neutral-600 hover:text-emerald-600 transition-colors font-medium"
           >
             Córdoba en Datos
           </Link>
-          {" > "}
-          <span className="text-neutral-900 dark:text-neutral-100">
+          <span className="text-neutral-400">/</span>
+          <span className="text-neutral-900 font-semibold">
             {dashboard.name}
           </span>
         </nav>
