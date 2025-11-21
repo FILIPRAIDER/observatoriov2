@@ -8,14 +8,14 @@ export default async function CordobaEnDatosSection() {
 
   return (
     <FadeIn>
-      <section className="w-full py-10 sm:py-12">
+      <section className="w-full py-6 sm:py-12">
         {/* Encabezado */}
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-neutral-900 sm:text-[36px]">
+        <div className="mb-6 text-center sm:mb-8">
+          <h1 className="text-2xl font-bold text-neutral-900 sm:text-[36px]">
             Observatorio de la educación
           </h1>
 
-          <p className="mx-auto mt-4 max-w-3xl text-lg text-neutral-700">
+          <p className="mx-auto mt-3 max-w-3xl text-base text-neutral-700 sm:mt-4 sm:text-lg">
             Explora <span className="font-semibold text-emerald-700">datos y cifras</span>{" "}
             desde la primera infancia hasta la educación superior
           </p>

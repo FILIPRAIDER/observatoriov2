@@ -14,8 +14,8 @@ export default function DashboardNavigation({
   currentDashboardId,
 }: DashboardNavigationProps) {
   return (
-    <div className="mb-8 overflow-x-auto">
-      <div className="flex gap-3 pb-2">
+    <div className="mb-6 -mx-3 px-3 sm:mx-0 sm:px-0 sm:mb-8">
+      <div className="flex gap-2 overflow-x-auto pb-2 sm:gap-3">
         {dashboards.map((dashboard) => {
           const isActive = dashboard.id.toString() === currentDashboardId;
           return (
@@ -23,7 +23,7 @@ export default function DashboardNavigation({
               key={Number(dashboard.id)}
               href={`/cordoba-en-datos/${dashboard.id}`}
               className={`
-                shrink-0 rounded-lg px-4 py-2.5 text-sm font-medium transition-all
+                shrink-0 rounded-lg px-3 py-2 text-xs font-medium transition-all sm:px-4 sm:py-2.5 sm:text-sm
                 ${
                   isActive
                     ? "bg-emerald-700 text-white shadow-md"

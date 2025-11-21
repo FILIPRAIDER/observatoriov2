@@ -13,8 +13,8 @@ export default function PowerBIEmbed({ embedUrl, title }: PowerBIEmbedProps) {
 
   return (
     <div className="relative w-full overflow-hidden rounded-lg border border-neutral-300 shadow-inner">
-      {/* Contenedor con aspect ratio 16:9 */}
-      <div className="relative w-full bg-neutral-50" style={{ paddingBottom: "56.25%" }}>
+      {/* Contenedor con aspect ratio 16:9 y altura mínima en mobile */}
+      <div className="relative w-full bg-neutral-50" style={{ paddingBottom: "56.25%", minHeight: "400px" }}>
         <iframe
           title={title}
           src={publicUrl}

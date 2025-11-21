@@ -27,11 +27,11 @@ export default function DashboardSearch({ dashboards }: DashboardSearchProps) {
   return (
     <>
       {/* Barra de búsqueda */}
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <div className="relative mx-auto max-w-2xl">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 sm:pl-4">
             <svg
-              className="h-5 w-5 text-neutral-400"
+              className="h-4 w-4 text-neutral-400 sm:h-5 sm:w-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -46,18 +46,18 @@ export default function DashboardSearch({ dashboards }: DashboardSearchProps) {
           </div>
           <input
             type="text"
-            placeholder="Buscar dashboards por nombre, descripción o categoría..."
+            placeholder="Buscar dashboards..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-lg border border-neutral-300 bg-white py-3 pl-11 pr-4 text-neutral-900 placeholder-neutral-500 shadow-inner transition-all focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+            className="w-full rounded-lg border border-neutral-300 bg-white py-2.5 pl-10 pr-10 text-sm text-neutral-900 placeholder-neutral-500 shadow-inner transition-all focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 sm:py-3 sm:pl-11 sm:pr-4 sm:text-base"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute inset-y-0 right-0 flex items-center pr-4 text-neutral-400 hover:text-neutral-600"
+              className="absolute inset-y-0 right-0 flex items-center pr-3 text-neutral-400 hover:text-neutral-600 sm:pr-4"
               aria-label="Limpiar búsqueda"
             >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -71,7 +71,7 @@ export default function DashboardSearch({ dashboards }: DashboardSearchProps) {
 
         {/* Contador de resultados */}
         {searchQuery && (
-          <p className="mt-3 text-center text-sm text-neutral-600">
+          <p className="mt-2 text-center text-xs text-neutral-600 sm:mt-3 sm:text-sm">
             {filteredDashboards.length === 0
               ? "No se encontraron dashboards"
               : `${filteredDashboards.length} ${
@@ -83,16 +83,16 @@ export default function DashboardSearch({ dashboards }: DashboardSearchProps) {
 
       {/* Grid de dashboards */}
       {filteredDashboards.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
           {filteredDashboards.map((dashboard) => (
             <DashboardCard key={Number(dashboard.id)} dashboard={dashboard} />
           ))}
         </div>
       ) : (
-        <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-12 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-neutral-100">
+        <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-8 text-center sm:p-12">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100 sm:mb-4 sm:h-16 sm:w-16">
             <svg
-              className="h-8 w-8 text-neutral-400"
+              className="h-6 w-6 text-neutral-400 sm:h-8 sm:w-8"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -105,8 +105,8 @@ export default function DashboardSearch({ dashboards }: DashboardSearchProps) {
               />
             </svg>
           </div>
-          <p className="text-lg font-medium text-neutral-900">No se encontraron resultados</p>
-          <p className="mt-2 text-sm text-neutral-600">
+          <p className="text-base font-medium text-neutral-900 sm:text-lg">No se encontraron resultados</p>
+          <p className="mt-1.5 text-xs text-neutral-600 sm:mt-2 sm:text-sm">
             Intenta con otros términos de búsqueda
           </p>
         </div>
