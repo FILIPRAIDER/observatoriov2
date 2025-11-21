@@ -26,7 +26,7 @@ export default function WhoWeAre() {
         {/* Imagen */}
         <div className="relative overflow-hidden rounded-3xl">
           {/* altura/relación para que no quede un bloque alto con mucho vacío */}
-          <div className="relative aspect-[4/3] md:aspect-[16/11] lg:aspect-[3/2]">
+          <div className="relative aspect-4/3 md:aspect-16/11 lg:aspect-3/2">
             <Image
               src="/whoweare.jpg"
               alt="Equipo del Observatorio de la Educación en Córdoba"

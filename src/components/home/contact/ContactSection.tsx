@@ -1,10 +1,151 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, FormEvent, useState } from "react";
+import { toast } from "sonner";
+import { sendContactMessage } from "@/app/actions/contact";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 const MAP_CENTER: [number, number] = [-75.86842707819238, 8.766181023767054]; // [lng, lat]
 const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? "";
+
+function ContactForm({ cardClass, inputClass }: { cardClass: string; inputClass: string }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    
+    if (isSubmitting) return;
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      phone: formData.get("phone") as string,
+      service: formData.get("service") as string,
+      message: formData.get("message") as string,
+    };
+
+    if (!data.name || !data.email || !data.message) {
+      toast.error("Por favor completa todos los campos obligatorios");
+      return;
+    }
+
+    setIsSubmitting(true);
+    const loadingToast = toast.loading("Enviando mensaje...");
+
+    try {
+      const result = await sendContactMessage(data);
+      
+      toast.dismiss(loadingToast);
+
+      if (result.success) {
+        toast.success(result.message, {
+          duration: 5000,
+        });
+        e.currentTarget.reset();
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      toast.dismiss(loadingToast);
+      toast.error("Hubo un error al enviar tu mensaje. Intenta nuevamente.");
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} noValidate className={`${cardClass} p-4 sm:p-6 md:p-8`}>
+      <div className="grid grid-cols-1 gap-4">
+        <div className="space-y-1">
+          <label htmlFor="name" className="text-sm text-gray-600">
+            Nombre <span className="text-red-500">*</span>
+          </label>
+          <input
+            id="name"
+            name="name"
+            placeholder="Jane Smith"
+            required
+            disabled={isSubmitting}
+            className={inputClass}
+          />
+        </div>
+        <div className="space-y-1">
+          <label htmlFor="email" className="text-sm text-gray-600">
+            Correo <span className="text-red-500">*</span>
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="jane@example.com"
+            required
+            disabled={isSubmitting}
+            className={inputClass}
+          />
+        </div>
+        <div className="space-y-1">
+          <label htmlFor="phone" className="text-sm text-gray-600">
+            Número de teléfono
+          </label>
+          <input
+            id="phone"
+            name="phone"
+            inputMode="tel"
+            placeholder="+57"
+            disabled={isSubmitting}
+            className={inputClass}
+          />
+        </div>
+        <div className="space-y-1">
+          <label htmlFor="service" className="text-sm text-gray-600">
+            Servicio
+          </label>
+          <select
+            id="service"
+            name="service"
+            className={inputClass}
+            defaultValue=""
+            disabled={isSubmitting}
+          >
+            <option value="" disabled>
+              Seleccione uno
+            </option>
+            <option>Estudios</option>
+            <option>Consultorías</option>
+            <option>Proyectos de investigación</option>
+            <option>Acompañamiento curricular</option>
+            <option>Cursos / Diplomados</option>
+          </select>
+        </div>
+        <div className="space-y-1">
+          <label htmlFor="message" className="text-sm text-gray-600">
+            Mensaje <span className="text-red-500">*</span>
+          </label>
+          <textarea
+            id="message"
+            name="message"
+            rows={4}
+            placeholder="Escribe tu mensaje aquí..."
+            required
+            disabled={isSubmitting}
+            className={inputClass}
+          />
+        </div>
+        <div className="pt-2">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="cursor-pointer inline-flex w-full items-center justify-center rounded-2xl bg-[#17594A] px-6 py-3.5 text-white font-semibold hover:bg-emerald-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? "Enviando..." : "Enviar"}
+          </button>
+        </div>
+      </div>
+    </form>
+  );
+}
 
 export default function ContactSection() {
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -55,7 +196,7 @@ export default function ContactSection() {
   const cardClass =
     "rounded-3xl border border-gray-200 bg-white overflow-hidden";
   const inputClass =
-    "w-full rounded-2xl bg-gray-100/70 px-4 py-3 text-[15px] outline-none ring-1 ring-transparent placeholder:text-gray-400 transition focus:bg-white focus:ring-emerald-600";
+    "w-full rounded-2xl bg-gray-100/70 px-4 py-3 text-[15px] outline-none ring-1 ring-transparent placeholder:text-gray-400 transition focus:bg-white focus:ring-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed";
 
   return (
     <section
@@ -92,86 +233,8 @@ export default function ContactSection() {
           </div>
         </div>
 
-        {/* FORMULARIO (sin cambios funcionales) */}
-        <form noValidate className={`${cardClass} p-4 sm:p-6 md:p-8`}>
-          <div className="grid grid-cols-1 gap-4">
-            <div className="space-y-1">
-              <label htmlFor="name" className="text-sm text-gray-600">
-                Nombre
-              </label>
-              <input
-                id="name"
-                name="name"
-                placeholder="Jane Smith"
-                className={inputClass}
-              />
-            </div>
-            <div className="space-y-1">
-              <label htmlFor="email" className="text-sm text-gray-600">
-                Correo
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="jane@framer.com"
-                className={inputClass}
-              />
-            </div>
-            <div className="space-y-1">
-              <label htmlFor="phone" className="text-sm text-gray-600">
-                Número de teléfono
-              </label>
-              <input
-                id="phone"
-                name="phone"
-                inputMode="tel"
-                placeholder="+57"
-                className={inputClass}
-              />
-            </div>
-            <div className="space-y-1">
-              <label htmlFor="service" className="text-sm text-gray-600">
-                Servicio
-              </label>
-              <select
-                id="service"
-                name="service"
-                className={inputClass}
-                defaultValue=""
-              >
-                <option value="" disabled>
-                  Seleccione uno
-                </option>
-                <option>Estudios</option>
-                <option>Consultorías</option>
-                <option>Proyectos de investigación</option>
-                <option>Acompañamiento curricular</option>
-                <option>Cursos / Diplomados</option>
-              </select>
-            </div>
-            <div className="space-y-1">
-              <label htmlFor="message" className="text-sm text-gray-600">
-                Mensaje
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                rows={4}
-                placeholder="Mensaje"
-                className={inputClass}
-              />
-            </div>
-            <div className="pt-2">
-              <button
-                type="button"
-                className="cursor-pointer inline-flex w-full items-center justify-center rounded-2xl bg-[#17594A] px-6 py-3.5 text-white font-semibold hover:bg-emerald-800 transition"
-              >
-                Enviar
-              </button>
-            </div>
-          </div>
-        </form>
+        {/* FORMULARIO */}
+        <ContactForm cardClass={cardClass} inputClass={inputClass} />
       </div>
     </section>
   );

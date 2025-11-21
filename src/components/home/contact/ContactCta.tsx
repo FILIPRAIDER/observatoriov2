@@ -1,10 +1,49 @@
 "use client";
 
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
+import { toast } from "sonner";
+import { subscribeToNewsletter } from "@/app/actions/contact";
 
 export default function ContactCta() {
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault(); // solo UI por ahora
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    
+    if (isSubmitting) return;
+
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+
+    if (!name || !email) {
+      toast.error("Por favor completa todos los campos");
+      return;
+    }
+
+    setIsSubmitting(true);
+    const loadingToast = toast.loading("Enviando...");
+
+    try {
+      const result = await subscribeToNewsletter(name, email);
+      
+      toast.dismiss(loadingToast);
+
+      if (result.success) {
+        toast.success(result.message, {
+          duration: 5000,
+        });
+        e.currentTarget.reset();
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      toast.dismiss(loadingToast);
+      toast.error("Hubo un error al enviar tu información. Intenta nuevamente.");
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -39,7 +78,9 @@ export default function ContactCta() {
                 name="name"
                 type="text"
                 placeholder="Jane Smith"
-                className="w-full rounded-2xl bg-gray-100/70 px-4 py-3 text-[15px] outline-none ring-1 ring-transparent transition placeholder:text-gray-400 focus:bg-white focus:ring-emerald-600"
+                required
+                disabled={isSubmitting}
+                className="w-full rounded-2xl bg-gray-100/70 px-4 py-3 text-[15px] outline-none ring-1 ring-transparent transition placeholder:text-gray-400 focus:bg-white focus:ring-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -52,8 +93,10 @@ export default function ContactCta() {
                 id="contact-email"
                 name="email"
                 type="email"
-                placeholder="jane@framer.com"
-                className="w-full rounded-2xl bg-gray-100/70 px-4 py-3 text-[15px] outline-none ring-1 ring-transparent transition placeholder:text-gray-400 focus:bg-white focus:ring-emerald-600"
+                placeholder="jane@example.com"
+                required
+                disabled={isSubmitting}
+                className="w-full rounded-2xl bg-gray-100/70 px-4 py-3 text-[15px] outline-none ring-1 ring-transparent transition placeholder:text-gray-400 focus:bg-white focus:ring-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -61,10 +104,11 @@ export default function ContactCta() {
             <div className="flex items-end">
               <button
                 type="submit"
-                className="cursor-pointer inline-flex w-full items-center justify-center rounded-2xl bg-[#17594A] px-6 py-3.5 text-white font-semibold hover:bg-emerald-800 transition"
+                disabled={isSubmitting}
+                className="cursor-pointer inline-flex w-full items-center justify-center rounded-2xl bg-[#17594A] px-6 py-3.5 text-white font-semibold hover:bg-emerald-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label="Enviar solicitud"
               >
-                Enviar
+                {isSubmitting ? "Enviando..." : "Enviar"}
               </button>
             </div>
           </div>

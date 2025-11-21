@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const inter = Inter({
@@ -25,7 +26,24 @@ export default function RootLayout({
   return (
     <html lang="es" className={geistMono.variable}>
       {/* Inter aplicado a TODO el sitio */}
-      <body className={`${inter.className} antialiased`}>{children}</body>
+      <body className={`${inter.className} antialiased`}>
+        {children}
+        <Toaster 
+          position="bottom-right" 
+          toastOptions={{
+            style: {
+              background: '#ffffff',
+              color: '#111827',
+              border: '1px solid #e5e7eb',
+              borderRadius: '12px',
+              fontSize: '14px',
+              padding: '16px',
+            },
+            className: 'sonner-toast',
+          }}
+          richColors
+        />
+      </body>
     </html>
   );
 }

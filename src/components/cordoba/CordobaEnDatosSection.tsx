@@ -1,5 +1,4 @@
 import FadeIn from "@/components/ui/animation/FadeIn";
-import DashboardCard from "./powerbi/DashboardCard";
 import DashboardSearch from "./powerbi/DashboardSearch";
 import { getAllDashboards } from "@/app/actions/dashboards";
 

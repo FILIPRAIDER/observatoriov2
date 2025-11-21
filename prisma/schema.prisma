@@ -212,3 +212,33 @@ enum powerbi_dashboards_category {
   salud
   otro
 }
+
+// Tabla para suscriptores del newsletter (ContactCta)
+model newsletter_subscribers {
+  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  name       String    @db.VarChar(255)
+  email      String    @unique @db.VarChar(255)
+  subscribed Boolean   @default(true)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
+
+  @@index([email], map: "newsletter_subscribers_email_index")
+  @@index([subscribed], map: "newsletter_subscribers_subscribed_index")
+}
+
+// Tabla para mensajes de contacto (ContactSection)
+model contact_messages {
+  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  name       String    @db.VarChar(255)
+  email      String    @db.VarChar(255)
+  phone      String?   @db.VarChar(50)
+  service    String?   @db.VarChar(255)
+  message    String    @db.Text
+  read       Boolean   @default(false)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
+
+  @@index([email], map: "contact_messages_email_index")
+  @@index([read], map: "contact_messages_read_index")
+  @@index([created_at], map: "contact_messages_created_at_index")
+}
