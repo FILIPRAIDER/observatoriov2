@@ -78,22 +78,30 @@ export async function subscribeToNewsletter(
       });
     }
 
+    // Verificar que tenemos API key
+    if (!process.env.RESEND_API_KEY) {
+      console.error("[EMAIL ERROR] RESEND_API_KEY no está configurada");
+    } else {
+      console.log("[EMAIL] Intentando enviar emails...");
+    }
+
     // Enviar email de confirmación al usuario
     try {
-      await resend.emails.send({
+      const result = await resend.emails.send({
         from: "Observatorio de la Educación <onboarding@resend.dev>",
         to: [email],
         subject: "¡Gracias por contactarnos! - Observatorio de la Educación",
         react: NewsletterWelcomeEmail({ name }),
       });
+      console.log("[EMAIL] Email de confirmación enviado:", result);
     } catch (emailError) {
-      console.error("Error enviando email de confirmación:", emailError);
+      console.error("[EMAIL ERROR] Error enviando email de confirmación:", emailError);
       // No fallar la solicitud si el email falla
     }
 
     // Notificar al equipo del observatorio sobre la nueva solicitud
     try {
-      await resend.emails.send({
+      const result = await resend.emails.send({
         from: "Sistema Observatorio <onboarding@resend.dev>",
         to: [CONTACT_EMAIL],
         replyTo: email,
@@ -109,8 +117,9 @@ export async function subscribeToNewsletter(
           </div>
         `,
       });
+      console.log("[EMAIL] Notificación al equipo enviada:", result);
     } catch (emailError) {
-      console.error("Error enviando notificación al equipo:", emailError);
+      console.error("[EMAIL ERROR] Error enviando notificación al equipo:", emailError);
     }
 
     return {
@@ -183,9 +192,16 @@ export async function sendContactMessage(
       },
     });
 
+    // Verificar que tenemos API key
+    if (!process.env.RESEND_API_KEY) {
+      console.error("[EMAIL ERROR] RESEND_API_KEY no está configurada");
+    } else {
+      console.log("[EMAIL] Intentando enviar emails...");
+    }
+
     // Enviar email al equipo del observatorio
     try {
-      await resend.emails.send({
+      const result = await resend.emails.send({
         from: "Formulario de Contacto <onboarding@resend.dev>",
         to: [CONTACT_EMAIL],
         replyTo: data.email,
@@ -198,20 +214,22 @@ export async function sendContactMessage(
           message: data.message,
         }),
       });
+      console.log("[EMAIL] Email al equipo enviado:", result);
     } catch (emailError) {
-      console.error("Error enviando email al equipo:", emailError);
+      console.error("[EMAIL ERROR] Error enviando email al equipo:", emailError);
     }
 
     // Enviar email de confirmación al usuario
     try {
-      await resend.emails.send({
+      const result = await resend.emails.send({
         from: "Observatorio de la Educación <onboarding@resend.dev>",
         to: [data.email],
         subject: "Hemos recibido tu mensaje - Observatorio de la Educación",
         react: ContactConfirmationEmail({ name: data.name }),
       });
+      console.log("[EMAIL] Email de confirmación enviado:", result);
     } catch (emailError) {
-      console.error("Error enviando email de confirmación:", emailError);
+      console.error("[EMAIL ERROR] Error enviando email de confirmación:", emailError);
     }
 
     return {
