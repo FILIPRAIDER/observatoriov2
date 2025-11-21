@@ -4,6 +4,7 @@
 import { prisma } from "@/lib/prisma";
 import { unstable_cache as cache } from "next/cache";
 import { toYMD, ymdToDMY } from "@/lib/dates";
+import { slugify } from "@/lib/slug";
 import type { Prisma } from "@prisma/client";
 
 export type PublicationsPageItem = {
@@ -30,15 +31,6 @@ export type PublicationsPageResult = {
   hasMore: boolean;
   nextOffset: number;
 };
-
-function slugify(s: string) {
-  return s
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "");
-}
 
 // Fallbacks por si alguna publicación aún no tiene imagen
 const FALLBACKS = [

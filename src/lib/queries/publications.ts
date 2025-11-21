@@ -1,6 +1,7 @@
 // src/lib/queries/publications.ts
 import { prisma } from "@/lib/prisma";
 import { slugify, deslugify } from "@/lib/slug";
+import { unstable_cache as cache } from "next/cache";
 
 const FALLBACKS = [
   "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1600&q=60",
@@ -111,72 +112,80 @@ export type PublicationDetailDTO = {
 export async function getPublicationBySlugDB(
   slug: string
 ): Promise<PublicationDetailDTO | null> {
-  const guess = deslugify(slug);
-
-  const candidates = await prisma.publications.findMany({
-    where: { title: { contains: guess } },
-    include: {
-      publication_types: { select: { name: true } },
-      author_publication: {
-        orderBy: { sort_order: "asc" },
+  const run = cache(
+    async () => {
+      // Obtener todas las publicaciones y buscar por slug generado
+      // Esto es más confiable que buscar por texto parcial
+      const allPublications = await prisma.publications.findMany({
         include: {
-          authors: {
-            select: { first_name: true, last_name: true, organization: true },
+          publication_types: { select: { name: true } },
+          author_publication: {
+            orderBy: { sort_order: "asc" },
+            include: {
+              authors: {
+                select: { first_name: true, last_name: true, organization: true },
+              },
+            },
+          },
+          images: {
+            take: 1,
+            orderBy: [{ sort_order: "asc" }, { id: "asc" }],
+            select: { url: true, alt: true },
           },
         },
-      },
-      images: {
-        take: 1,
-        orderBy: [{ sort_order: "asc" }, { id: "asc" }],
-        select: { url: true, alt: true },
-      },
+        orderBy: [{ publication_date: "desc" }, { id: "desc" }],
+      });
+
+      // Buscar la publicación que coincida con el slug
+      const row = allPublications.find((r) => slugify(r.title) === slug);
+      if (!row) return null;
+
+      const img =
+        row.images?.[0]?.url ??
+        FALLBACKS[
+          Number((row.id as unknown as bigint) % BigInt(FALLBACKS.length))
+        ] ??
+        FALLBACKS[0];
+
+      const dateObj =
+        row.publication_date instanceof Date
+          ? row.publication_date
+          : new Date(row.publication_date as unknown as string);
+
+      const authors = row.author_publication.map((ap) => ({
+        firstName: ap.authors.first_name,
+        lastName: ap.authors.last_name,
+        organization: ap.authors.organization,
+      }));
+
+      return {
+        id: row.id.toString(),
+        title: row.title,
+        tag: row.publication_types?.name ?? "Publicación",
+        dateISO: dateObj.toISOString(),
+        img,
+        alt: row.images?.[0]?.alt ?? row.title,
+        excerpt: row.abstract ?? "",
+        content: row.content ?? "",
+        authors,
+        slug,
+        // PDF fields
+        hasPdf: !!row.pdf_url,
+        pdfUrl: row.pdf_url ?? undefined,
+        pdfSize: row.pdf_size ? Number(row.pdf_size) : undefined,
+        pdfName: row.pdf_original_name ?? undefined,
+        // Additional fields
+        isFeatured: row.is_featured,
+        keywords: row.keywords ?? undefined,
+        externalUrl: row.external_url ?? undefined,
+        eventDate: row.event_date?.toISOString(),
+        submissionDeadline: row.submission_deadline?.toISOString(),
+        registrationDeadline: row.registration_deadline?.toISOString(),
+      };
     },
-    take: 20,
-  });
+    [`publication:${slug}`],
+    { revalidate: 300, tags: [`publication:${slug}`, "publications:list"] }
+  );
 
-  const row = candidates.find((r) => slugify(r.title) === slug);
-  if (!row) return null;
-
-  const img =
-    row.images?.[0]?.url ??
-    FALLBACKS[
-      Number((row.id as unknown as bigint) % BigInt(FALLBACKS.length))
-    ] ??
-    FALLBACKS[0];
-
-  const dateObj =
-    row.publication_date instanceof Date
-      ? row.publication_date
-      : new Date(row.publication_date as unknown as string);
-
-  const authors = row.author_publication.map((ap) => ({
-    firstName: ap.authors.first_name,
-    lastName: ap.authors.last_name,
-    organization: ap.authors.organization,
-  }));
-
-  return {
-    id: row.id.toString(),
-    title: row.title,
-    tag: row.publication_types?.name ?? "Publicación",
-    dateISO: dateObj.toISOString(),
-    img,
-    alt: row.images?.[0]?.alt ?? row.title,
-    excerpt: row.abstract ?? "",
-    content: row.content ?? "",
-    authors,
-    slug,
-    // PDF fields
-    hasPdf: !!row.pdf_url,
-    pdfUrl: row.pdf_url ?? undefined,
-    pdfSize: row.pdf_size ? Number(row.pdf_size) : undefined,
-    pdfName: row.pdf_original_name ?? undefined,
-    // Additional fields
-    isFeatured: row.is_featured,
-    keywords: row.keywords ?? undefined,
-    externalUrl: row.external_url ?? undefined,
-    eventDate: row.event_date?.toISOString(),
-    submissionDeadline: row.submission_deadline?.toISOString(),
-    registrationDeadline: row.registration_deadline?.toISOString(),
-  };
+  return run();
 }
