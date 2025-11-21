@@ -90,14 +90,15 @@ model users {
 }
 
 model authors {
-  id           BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
-  first_name   String         @db.VarChar(255)
-  last_name    String         @db.VarChar(255)
-  birth_date   DateTime       @db.Date
-  organization String         @db.VarChar(255)
-  created_at   DateTime?      @db.Timestamp(0)
-  updated_at   DateTime?      @db.Timestamp(0)
-  publications publications[]
+  id                 BigInt               @id @default(autoincrement()) @db.UnsignedBigInt
+  first_name         String               @db.VarChar(255)
+  last_name          String               @db.VarChar(255)
+  birth_date         DateTime             @db.Date
+  organization       String               @db.VarChar(255)
+  created_at         DateTime?            @db.Timestamp(0)
+  updated_at         DateTime?            @db.Timestamp(0)
+  author_publication author_publication[]
+  publications       publications[]
 }
 
 model publication_types {
@@ -118,28 +119,29 @@ model publication_types {
 }
 
 model publications {
-  id                    BigInt            @id @default(autoincrement()) @db.UnsignedBigInt
-  title                 String            @db.VarChar(255)
-  abstract              String            @db.Text
-  content               String            @db.LongText
-  pdf_url               String?           @db.VarChar(500)
-  pdf_file_id           String?           @db.VarChar(255)
-  pdf_original_name     String?           @db.VarChar(255)
-  pdf_size              BigInt?           @db.UnsignedBigInt
-  event_date            DateTime?         @db.Date
-  submission_deadline   DateTime?         @db.Date
-  registration_deadline DateTime?         @db.Date
-  external_url          String?           @db.VarChar(500)
-  is_featured           Boolean           @default(false)
-  keywords              String?           @db.Text
-  publication_date      DateTime          @db.Date
-  author_id             BigInt            @db.UnsignedBigInt
-  publication_type_id   BigInt            @db.UnsignedBigInt
-  created_at            DateTime?         @db.Timestamp(0)
-  updated_at            DateTime?         @db.Timestamp(0)
+  id                    BigInt               @id @default(autoincrement()) @db.UnsignedBigInt
+  title                 String               @db.VarChar(255)
+  abstract              String               @db.Text
+  content               String               @db.LongText
+  pdf_url               String?              @db.VarChar(500)
+  pdf_file_id           String?              @db.VarChar(255)
+  pdf_original_name     String?              @db.VarChar(255)
+  pdf_size              BigInt?              @db.UnsignedBigInt
+  event_date            DateTime?            @db.Date
+  submission_deadline   DateTime?            @db.Date
+  registration_deadline DateTime?            @db.Date
+  external_url          String?              @db.VarChar(500)
+  is_featured           Boolean              @default(false)
+  keywords              String?              @db.Text
+  publication_date      DateTime             @db.Date
+  author_id             BigInt               @db.UnsignedBigInt
+  publication_type_id   BigInt               @db.UnsignedBigInt
+  created_at            DateTime?            @db.Timestamp(0)
+  updated_at            DateTime?            @db.Timestamp(0)
+  author_publication    author_publication[]
   images                images[]
-  authors               authors           @relation(fields: [author_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "publications_author_id_foreign")
-  publication_types     publication_types @relation(fields: [publication_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "publications_publication_type_id_foreign")
+  authors               authors              @relation(fields: [author_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "publications_author_id_foreign")
+  publication_types     publication_types    @relation(fields: [publication_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "publications_publication_type_id_foreign")
 
   @@index([author_id], map: "publications_author_id_foreign")
   @@index([publication_type_id], map: "publications_publication_type_id_foreign")
@@ -167,4 +169,46 @@ model images {
 
   @@index([file_id], map: "images_file_id_index")
   @@index([publication_id], map: "images_publication_id_foreign")
+}
+
+model powerbi_dashboards {
+  id            BigInt                      @id @default(autoincrement()) @db.UnsignedBigInt
+  name          String                      @db.VarChar(255)
+  description   String?                     @db.Text
+  embed_url     String                      @db.VarChar(1000)
+  workspace_id  String?                     @db.VarChar(255)
+  report_id     String                      @db.VarChar(255)
+  category      powerbi_dashboards_category @default(educacion)
+  is_active     Boolean                     @default(true)
+  sort_order    Int                         @default(0)
+  thumbnail_url String?                     @db.VarChar(500)
+  created_at    DateTime?                   @db.Timestamp(0)
+  updated_at    DateTime?                   @db.Timestamp(0)
+
+  @@index([is_active, sort_order], map: "idx_active_sort")
+  @@index([category], map: "powerbi_dashboards_category_index")
+}
+
+model author_publication {
+  id             BigInt       @id @default(autoincrement()) @db.UnsignedBigInt
+  author_id      BigInt       @db.UnsignedBigInt
+  publication_id BigInt       @db.UnsignedBigInt
+  sort_order     Int          @default(0)
+  created_at     DateTime?    @db.Timestamp(0)
+  updated_at     DateTime?    @db.Timestamp(0)
+  authors        authors      @relation(fields: [author_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "author_publication_author_id_foreign")
+  publications   publications @relation(fields: [publication_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "author_publication_publication_id_foreign")
+
+  @@unique([author_id, publication_id], map: "author_publication_author_id_publication_id_unique")
+  @@index([author_id], map: "author_publication_author_id_index")
+  @@index([publication_id, sort_order], map: "author_publication_publication_id_sort_order_index")
+}
+
+enum powerbi_dashboards_category {
+  educacion
+  economia
+  demografia
+  infraestructura
+  salud
+  otro
 }

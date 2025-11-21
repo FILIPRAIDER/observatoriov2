@@ -8,8 +8,7 @@ export type ServiceBlock = {
 export const SERVICES: ServiceBlock[] = [
   {
     title: "Estudios",
-    imageUrl:
-      "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1600&q=60",
+    imageUrl: "/servicios/servicioEstudios.jpg",
     imageAlt: "Personas analizando datos en computador",
     items: [
       "Empleabilidad de egresados.",
@@ -22,8 +21,7 @@ export const SERVICES: ServiceBlock[] = [
   },
   {
     title: "Consultorías",
-    imageUrl:
-      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1600&q=60",
+    imageUrl: "/servicios/servicioConsultorías.jpg",
     imageAlt: "Equipo de consultores trabajando",
     items: [
       "Trayectorias educativas",
@@ -34,8 +32,7 @@ export const SERVICES: ServiceBlock[] = [
   },
   {
     title: "Proyectos de investigación",
-    imageUrl:
-      "https://images.unsplash.com/photo-1552581234-26160f608093?auto=format&fit=crop&w=1600&q=60",
+    imageUrl: "/servicios/servicioProyectosdeInvestigacion.jpg",
     imageAlt: "Trabajo de investigación en pizarra",
     items: [
       "Investigación sobre calidad educativa",
@@ -45,8 +42,7 @@ export const SERVICES: ServiceBlock[] = [
   },
   {
     title: "Acompañamiento curriculares",
-    imageUrl:
-      "https://images.unsplash.com/photo-1557800636-894a64c1696f?auto=format&fit=crop&w=1600&q=60",
+    imageUrl: "/servicios/servicioAcompañamientos.jpg",
     imageAlt: "Docentes revisando documentos",
     items: [
       "Revisión de proyectos educativos",
@@ -57,8 +53,7 @@ export const SERVICES: ServiceBlock[] = [
   },
   {
     title: "Cursos, seminarios y diplomados",
-    imageUrl:
-      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1600&q=60",
+    imageUrl: "/servicios/servicioCursosDiplomados.jpg",
     imageAlt: "Sesión formativa con docentes",
     items: [
       "Programas de formación a docentes",

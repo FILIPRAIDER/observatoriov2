@@ -4,16 +4,16 @@
 import { useEffect, useRef, useState, useCallback, useTransition } from "react";
 import FadeIn from "@/components/ui/animation/FadeIn";
 import PublicationListItem from "./PublicationListItem";
-import PublicationFilters, {
-  type FilterState,
-} from "./PublicationFilters";
+import AdvancedPublicationFilters, {
+  type AdvancedFilterState,
+} from "./AdvancedPublicationFilters";
 import {
   fetchPublicationsPage,
   type PublicationsPageItem,
   type PublicationType,
 } from "@/app/actions/publications";
 
-const LIMIT = 6;
+const LIMIT = 9;
 
 interface PublicationsSectionProps {
   initialTypes: PublicationType[];
@@ -46,7 +46,7 @@ export default function PublicationsSection({
   const [hasMore, setHasMore] = useState(true);
   const [isPending, startTransition] = useTransition();
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [filters, setFilters] = useState<FilterState>({
+  const [filters, setFilters] = useState<AdvancedFilterState>({
     search: "",
     typeId: "",
     onlyPdf: false,
@@ -121,10 +121,18 @@ export default function PublicationsSection({
           <p className="mt-2 text-[14px] text-neutral-600">
             Descubre los últimos análisis y tendencias en el sector educativo.
           </p>
+          {items.length > 0 && (
+            <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
+              <span className="font-semibold">{items.length}</span>
+              <span>
+                {items.length === 1 ? "publicación encontrada" : "publicaciones encontradas"}
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Filtros */}
-        <PublicationFilters
+        {/* Filtros avanzados */}
+        <AdvancedPublicationFilters
           types={initialTypes}
           onFilterChange={setFilters}
           initialFilters={filters}

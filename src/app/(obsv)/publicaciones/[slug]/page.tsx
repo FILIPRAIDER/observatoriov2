@@ -20,7 +20,7 @@ function ArticleBody({ text }: { text: string }) {
   const blocks = normalized.split(/\n{2,}/);
 
   return (
-    <div className="mx-auto mt-6 max-w-4xl text-[15px] leading-7 text-neutral-700">
+    <div className="mx-auto mt-10 max-w-4xl text-[16px] leading-relaxed text-neutral-700">
       {blocks.map((block, i) => {
         const hasBullets = block.includes("•");
 
@@ -29,7 +29,7 @@ function ArticleBody({ text }: { text: string }) {
           return (
             <p
               key={`p-${i}`}
-              className={i === 0 ? "" : "mt-4"}
+              className={i === 0 ? "" : "mt-6"}
               style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
             >
               {block}
@@ -45,17 +45,17 @@ function ArticleBody({ text }: { text: string }) {
           .filter(Boolean);
 
         return (
-          <div key={`blk-${i}`} className={i === 0 ? "" : "mt-4"}>
+          <div key={`blk-${i}`} className={i === 0 ? "" : "mt-6"}>
             {lead && (
               <p
-                className="mb-2"
+                className="mb-3"
                 style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
               >
                 {lead}
               </p>
             )}
             {items.length > 0 && (
-              <ul className="list-disc pl-6 space-y-1">
+              <ul className="list-disc pl-6 space-y-2">
                 {items.map((it, j) => (
                   <li key={`li-${i}-${j}`} className="marker:text-neutral-700">
                     <span

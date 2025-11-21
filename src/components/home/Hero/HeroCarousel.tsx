@@ -12,16 +12,24 @@ type Slide = { src: string; alt?: string };
 
 const FALLBACK: Slide[] = [
   {
-    src: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1600&q=70",
-    alt: "Campus y estudiantes",
+    src: "/servicios/servicioEstudios.jpg",
+    alt: "Estudios educativos",
   },
   {
-    src: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1600&q=70",
-    alt: "Trabajo colaborativo",
+    src: "/servicios/servicioConsultorías.jpg",
+    alt: "Consultorías educativas",
   },
   {
-    src: "https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?auto=format&fit=crop&w=1600&q=70",
-    alt: "Biblioteca universitaria",
+    src: "/servicios/servicioProyectosdeInvestigacion.jpg",
+    alt: "Proyectos de investigación",
+  },
+  {
+    src: "/servicios/servicioAcompañamientos.jpg",
+    alt: "Acompañamientos curriculares",
+  },
+  {
+    src: "/servicios/servicioCursosDiplomados.jpg",
+    alt: "Cursos y diplomados",
   },
 ];
 
