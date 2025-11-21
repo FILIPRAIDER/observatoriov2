@@ -87,20 +87,25 @@ export async function subscribeToNewsletter(
 
     // Enviar email de confirmación al usuario
     try {
+      console.log(`[EMAIL] Enviando confirmación a: ${email}`);
       const result = await resend.emails.send({
         from: "Observatorio de la Educación <observatorio@equipos.online>",
         to: [email],
         subject: "¡Gracias por contactarnos! - Observatorio de la Educación",
         react: NewsletterWelcomeEmail({ name }),
       });
-      console.log("[EMAIL] Email de confirmación enviado:", result);
+      console.log("[EMAIL] Email de confirmación enviado:", JSON.stringify(result));
+      if (result.error) {
+        console.error("[EMAIL ERROR] Error en respuesta:", result.error);
+      }
     } catch (emailError) {
-      console.error("[EMAIL ERROR] Error enviando email de confirmación:", emailError);
+      console.error("[EMAIL ERROR] Excepción enviando email de confirmación:", emailError);
       // No fallar la solicitud si el email falla
     }
 
     // Notificar al equipo del observatorio sobre la nueva solicitud
     try {
+      console.log(`[EMAIL] Enviando notificación al equipo: ${CONTACT_EMAIL}`);
       const result = await resend.emails.send({
         from: "Sistema Observatorio <sistema@equipos.online>",
         to: [CONTACT_EMAIL],
@@ -117,9 +122,12 @@ export async function subscribeToNewsletter(
           </div>
         `,
       });
-      console.log("[EMAIL] Notificación al equipo enviada:", result);
+      console.log("[EMAIL] Notificación al equipo enviada:", JSON.stringify(result));
+      if (result.error) {
+        console.error("[EMAIL ERROR] Error en respuesta al equipo:", result.error);
+      }
     } catch (emailError) {
-      console.error("[EMAIL ERROR] Error enviando notificación al equipo:", emailError);
+      console.error("[EMAIL ERROR] Excepción enviando notificación al equipo:", emailError);
     }
 
     return {
@@ -201,6 +209,7 @@ export async function sendContactMessage(
 
     // Enviar email al equipo del observatorio
     try {
+      console.log(`[EMAIL] Enviando mensaje completo al equipo: ${CONTACT_EMAIL}`);
       const result = await resend.emails.send({
         from: "Formulario de Contacto <contacto@equipos.online>",
         to: [CONTACT_EMAIL],
@@ -214,22 +223,29 @@ export async function sendContactMessage(
           message: data.message,
         }),
       });
-      console.log("[EMAIL] Email al equipo enviado:", result);
+      console.log("[EMAIL] Email al equipo enviado:", JSON.stringify(result));
+      if (result.error) {
+        console.error("[EMAIL ERROR] Error en respuesta al equipo:", result.error);
+      }
     } catch (emailError) {
-      console.error("[EMAIL ERROR] Error enviando email al equipo:", emailError);
+      console.error("[EMAIL ERROR] Excepción enviando email al equipo:", emailError);
     }
 
     // Enviar email de confirmación al usuario
     try {
+      console.log(`[EMAIL] Enviando confirmación al usuario: ${data.email}`);
       const result = await resend.emails.send({
         from: "Observatorio de la Educación <observatorio@equipos.online>",
         to: [data.email],
         subject: "Hemos recibido tu mensaje - Observatorio de la Educación",
         react: ContactConfirmationEmail({ name: data.name }),
       });
-      console.log("[EMAIL] Email de confirmación enviado:", result);
+      console.log("[EMAIL] Email de confirmación enviado:", JSON.stringify(result));
+      if (result.error) {
+        console.error("[EMAIL ERROR] Error en respuesta confirmación:", result.error);
+      }
     } catch (emailError) {
-      console.error("[EMAIL ERROR] Error enviando email de confirmación:", emailError);
+      console.error("[EMAIL ERROR] Excepción enviando email de confirmación:", emailError);
     }
 
     return {
