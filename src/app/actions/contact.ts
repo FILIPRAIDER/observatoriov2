@@ -88,7 +88,7 @@ export async function subscribeToNewsletter(
     // Enviar email de confirmación al usuario
     try {
       const result = await resend.emails.send({
-        from: "Observatorio de la Educación <onboarding@resend.dev>",
+        from: "Observatorio de la Educación <observatorio@equipos.online>",
         to: [email],
         subject: "¡Gracias por contactarnos! - Observatorio de la Educación",
         react: NewsletterWelcomeEmail({ name }),
@@ -101,11 +101,9 @@ export async function subscribeToNewsletter(
 
     // Notificar al equipo del observatorio sobre la nueva solicitud
     try {
-      // TEMPORAL: Resend en modo testing solo permite enviar a filipraider123@gmail.com
-      // Cambiar a CONTACT_EMAIL cuando se verifique el dominio
       const result = await resend.emails.send({
-        from: "Sistema Observatorio <onboarding@resend.dev>",
-        to: ["filipraider123@gmail.com"], // TEMPORAL: cambiar a CONTACT_EMAIL después
+        from: "Sistema Observatorio <sistema@equipos.online>",
+        to: [CONTACT_EMAIL],
         replyTo: email,
         subject: `Nueva solicitud de contacto de ${name}`,
         html: `
@@ -203,11 +201,9 @@ export async function sendContactMessage(
 
     // Enviar email al equipo del observatorio
     try {
-      // TEMPORAL: Resend en modo testing solo permite enviar a filipraider123@gmail.com
-      // Cambiar a CONTACT_EMAIL cuando se verifique el dominio
       const result = await resend.emails.send({
-        from: "Formulario de Contacto <onboarding@resend.dev>",
-        to: ["filipraider123@gmail.com"], // TEMPORAL: cambiar a CONTACT_EMAIL después
+        from: "Formulario de Contacto <contacto@equipos.online>",
+        to: [CONTACT_EMAIL],
         replyTo: data.email,
         subject: `Nuevo mensaje de contacto de ${data.name}`,
         react: ContactMessageEmail({
@@ -226,7 +222,7 @@ export async function sendContactMessage(
     // Enviar email de confirmación al usuario
     try {
       const result = await resend.emails.send({
-        from: "Observatorio de la Educación <onboarding@resend.dev>",
+        from: "Observatorio de la Educación <observatorio@equipos.online>",
         to: [data.email],
         subject: "Hemos recibido tu mensaje - Observatorio de la Educación",
         react: ContactConfirmationEmail({ name: data.name }),
