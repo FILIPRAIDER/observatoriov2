@@ -114,9 +114,20 @@ export async function getPublicationBySlugDB(
 ): Promise<PublicationDetailDTO | null> {
   const run = cache(
     async () => {
-      // Obtener todas las publicaciones y buscar por slug generado
-      // Esto es más confiable que buscar por texto parcial
-      const allPublications = await prisma.publications.findMany({
+      // Convertir el slug a palabras clave para búsqueda
+      const searchTerms = slug
+        .split('-')
+        .filter(word => word.length > 3) // Solo palabras significativas
+        .slice(0, 5) // Máximo 5 palabras para la búsqueda
+        .join(' ');
+
+      // Buscar publicaciones que contengan las palabras clave
+      const candidates = await prisma.publications.findMany({
+        where: {
+          title: {
+            contains: searchTerms,
+          },
+        },
         include: {
           publication_types: { select: { name: true } },
           author_publication: {
@@ -133,11 +144,12 @@ export async function getPublicationBySlugDB(
             select: { url: true, alt: true },
           },
         },
+        take: 50, // Limitar a 50 candidatos
         orderBy: [{ publication_date: "desc" }, { id: "desc" }],
       });
 
-      // Buscar la publicación que coincida con el slug
-      const row = allPublications.find((r) => slugify(r.title) === slug);
+      // Buscar la publicación que coincida exactamente con el slug
+      const row = candidates.find((r) => slugify(r.title) === slug);
       if (!row) return null;
 
       const img =
