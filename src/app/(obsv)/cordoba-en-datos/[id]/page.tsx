@@ -39,11 +39,11 @@ export default async function DashboardPage({
 
         {/* Título y descripción */}
         <div className="mb-8">
-          <h1 className="mb-4 text-3xl font-bold text-neutral-900 sm:text-4xl dark:text-neutral-100">
+          <h1 className="mb-4 text-3xl font-bold text-neutral-900 sm:text-4xl">
             {dashboard.name}
           </h1>
           {dashboard.description && (
-            <p className="text-lg text-neutral-700 dark:text-neutral-300">
+            <p className="text-lg text-neutral-700 leading-relaxed">
               {dashboard.description}
             </p>
           )}

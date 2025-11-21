@@ -10,12 +10,12 @@ export default async function CordobaEnDatosSection() {
       <section className="w-full py-10 sm:py-12">
         {/* Encabezado */}
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-semibold text-neutral-900 sm:text-[26px] dark:text-neutral-100">
+          <h1 className="text-3xl font-bold text-neutral-900 sm:text-[36px]">
             Observatorio de la educación
           </h1>
 
-          <p className="mx-auto mt-3 inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-4 py-1.5 text-sm text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400">
-            Explore <span className="px-1 font-semibold">datos y cifras</span>{" "}
+          <p className="mx-auto mt-4 max-w-3xl text-lg text-neutral-700">
+            Explora <span className="font-semibold text-emerald-700">datos y cifras</span>{" "}
             desde la primera infancia hasta la educación superior
           </p>
         </div>

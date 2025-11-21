@@ -44,18 +44,18 @@ export default function DashboardCard({ dashboard }: DashboardCardProps) {
       </div>
 
       {/* Contenido */}
-      <div className="p-5">
-        <h3 className="mb-2 text-lg font-semibold text-neutral-900 group-hover:text-emerald-600 dark:text-neutral-100">
+      <div className="p-6 bg-neutral-900">
+        <h3 className="mb-3 text-xl font-bold text-white group-hover:text-emerald-400">
           {dashboard.name}
         </h3>
 
         {dashboard.description && (
-          <p className="mb-4 line-clamp-2 text-sm text-neutral-600 dark:text-neutral-400">
+          <p className="mb-4 line-clamp-3 text-[15px] leading-relaxed text-neutral-300">
             {dashboard.description}
           </p>
         )}
 
-        <div className="flex items-center text-sm font-medium text-emerald-600 dark:text-emerald-400">
+        <div className="flex items-center text-[15px] font-medium text-emerald-400">
           Ver dashboard
           <svg
             className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1"
