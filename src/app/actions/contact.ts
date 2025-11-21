@@ -101,9 +101,11 @@ export async function subscribeToNewsletter(
 
     // Notificar al equipo del observatorio sobre la nueva solicitud
     try {
+      // TEMPORAL: Resend en modo testing solo permite enviar a filipraider123@gmail.com
+      // Cambiar a CONTACT_EMAIL cuando se verifique el dominio
       const result = await resend.emails.send({
         from: "Sistema Observatorio <onboarding@resend.dev>",
-        to: [CONTACT_EMAIL],
+        to: ["filipraider123@gmail.com"], // TEMPORAL: cambiar a CONTACT_EMAIL después
         replyTo: email,
         subject: `Nueva solicitud de contacto de ${name}`,
         html: `
@@ -201,9 +203,11 @@ export async function sendContactMessage(
 
     // Enviar email al equipo del observatorio
     try {
+      // TEMPORAL: Resend en modo testing solo permite enviar a filipraider123@gmail.com
+      // Cambiar a CONTACT_EMAIL cuando se verifique el dominio
       const result = await resend.emails.send({
         from: "Formulario de Contacto <onboarding@resend.dev>",
-        to: [CONTACT_EMAIL],
+        to: ["filipraider123@gmail.com"], // TEMPORAL: cambiar a CONTACT_EMAIL después
         replyTo: data.email,
         subject: `Nuevo mensaje de contacto de ${data.name}`,
         react: ContactMessageEmail({

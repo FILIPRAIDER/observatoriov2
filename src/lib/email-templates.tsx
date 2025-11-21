@@ -311,67 +311,71 @@ export function ContactMessageEmail({
                       </td>
                     </tr>
 
-                    {phone && (
-                      <>
-                        <tr><td style={{ height: '10px' }}></td></tr>
-                        <tr>
-                          <td style={{ 
-                            padding: '12px 20px',
-                            backgroundColor: '#f9fafb',
-                            borderRadius: '8px'
-                          }}>
-                            <table cellPadding="0" cellSpacing="0" style={{ width: '100%' }}>
-                              <tr>
-                                <td style={{ 
-                                  fontSize: '14px', 
-                                  color: '#6b7280',
-                                  fontWeight: '600',
-                                  paddingBottom: '4px'
-                                }}>
-                                  📱 Teléfono
-                                </td>
-                              </tr>
-                              <tr>
-                                <td style={{ fontSize: '16px', color: '#111827' }}>
-                                  {phone}
-                                </td>
-                              </tr>
-                            </table>
-                          </td>
-                        </tr>
-                      </>
-                    )}
+                    {phone ? (
+                      <tr>
+                        <td style={{ height: '10px' }}></td>
+                      </tr>
+                    ) : null}
+                    {phone ? (
+                      <tr>
+                        <td style={{ 
+                          padding: '12px 20px',
+                          backgroundColor: '#f9fafb',
+                          borderRadius: '8px'
+                        }}>
+                          <table cellPadding="0" cellSpacing="0" style={{ width: '100%' }}>
+                            <tr>
+                              <td style={{ 
+                                fontSize: '14px', 
+                                color: '#6b7280',
+                                fontWeight: '600',
+                                paddingBottom: '4px'
+                              }}>
+                                📱 Teléfono
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ fontSize: '16px', color: '#111827' }}>
+                                {phone}
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    ) : null}
 
-                    {service && (
-                      <>
-                        <tr><td style={{ height: '10px' }}></td></tr>
-                        <tr>
-                          <td style={{ 
-                            padding: '12px 20px',
-                            backgroundColor: '#f9fafb',
-                            borderRadius: '8px'
-                          }}>
-                            <table cellPadding="0" cellSpacing="0" style={{ width: '100%' }}>
-                              <tr>
-                                <td style={{ 
-                                  fontSize: '14px', 
-                                  color: '#6b7280',
-                                  fontWeight: '600',
-                                  paddingBottom: '4px'
-                                }}>
-                                  🎯 Servicio de interés
-                                </td>
-                              </tr>
-                              <tr>
-                                <td style={{ fontSize: '16px', color: '#111827' }}>
-                                  {service}
-                                </td>
-                              </tr>
-                            </table>
-                          </td>
-                        </tr>
-                      </>
-                    )}
+                    {service ? (
+                      <tr>
+                        <td style={{ height: '10px' }}></td>
+                      </tr>
+                    ) : null}
+                    {service ? (
+                      <tr>
+                        <td style={{ 
+                          padding: '12px 20px',
+                          backgroundColor: '#f9fafb',
+                          borderRadius: '8px'
+                        }}>
+                          <table cellPadding="0" cellSpacing="0" style={{ width: '100%' }}>
+                            <tr>
+                              <td style={{ 
+                                fontSize: '14px', 
+                                color: '#6b7280',
+                                fontWeight: '600',
+                                paddingBottom: '4px'
+                              }}>
+                                🎯 Servicio de interés
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ fontSize: '16px', color: '#111827' }}>
+                                {service}
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    ) : null}
                   </table>
 
                   {/* Mensaje */}
