@@ -1,16 +1,18 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useRef } from "react";
 import { toast } from "sonner";
 import { subscribeToNewsletter } from "@/app/actions/contact";
 
 export default function ContactCta() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const submittingRef = useRef(false);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     
-    if (isSubmitting) return;
+    // Prevenir múltiples ejecuciones simultáneas (React StrictMode en dev)
+    if (isSubmitting || submittingRef.current) return;
 
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
@@ -22,6 +24,7 @@ export default function ContactCta() {
     }
 
     setIsSubmitting(true);
+    submittingRef.current = true;
 
     try {
       const result = await subscribeToNewsletter(name, email);
@@ -39,6 +42,10 @@ export default function ContactCta() {
       console.error(error);
     } finally {
       setIsSubmitting(false);
+      // Pequeño delay para prevenir re-ejecución inmediata
+      setTimeout(() => {
+        submittingRef.current = false;
+      }, 500);
     }
   }
 

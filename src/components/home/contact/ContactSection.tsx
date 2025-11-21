@@ -10,11 +10,13 @@ const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? "";
 
 function ContactForm({ cardClass, inputClass }: { cardClass: string; inputClass: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const submittingRef = useRef(false);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     
-    if (isSubmitting) return;
+    // Prevenir múltiples ejecuciones simultáneas (React StrictMode en dev)
+    if (isSubmitting || submittingRef.current) return;
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -31,6 +33,7 @@ function ContactForm({ cardClass, inputClass }: { cardClass: string; inputClass:
     }
 
     setIsSubmitting(true);
+    submittingRef.current = true;
 
     try {
       const result = await sendContactMessage(data);
@@ -48,6 +51,10 @@ function ContactForm({ cardClass, inputClass }: { cardClass: string; inputClass:
       console.error(error);
     } finally {
       setIsSubmitting(false);
+      // Pequeño delay para prevenir re-ejecución inmediata
+      setTimeout(() => {
+        submittingRef.current = false;
+      }, 500);
     }
   }
 

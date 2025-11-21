@@ -78,17 +78,39 @@ export async function subscribeToNewsletter(
       });
     }
 
-    // Enviar email de bienvenida
+    // Enviar email de confirmación al usuario
     try {
       await resend.emails.send({
         from: "Observatorio de la Educación <onboarding@resend.dev>",
         to: [email],
-        subject: "¡Bienvenido al Observatorio de la Educación!",
+        subject: "¡Gracias por contactarnos! - Observatorio de la Educación",
         react: NewsletterWelcomeEmail({ name }),
       });
     } catch (emailError) {
-      console.error("Error enviando email:", emailError);
-      // No fallar la suscripción si el email falla
+      console.error("Error enviando email de confirmación:", emailError);
+      // No fallar la solicitud si el email falla
+    }
+
+    // Notificar al equipo del observatorio sobre la nueva solicitud
+    try {
+      await resend.emails.send({
+        from: "Sistema Observatorio <onboarding@resend.dev>",
+        to: [CONTACT_EMAIL],
+        replyTo: email,
+        subject: `Nueva solicitud de contacto de ${name}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #17594A;">Nueva Solicitud de Contacto</h2>
+            <p><strong>Nombre:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Fecha:</strong> ${new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' })}</p>
+            <hr style="border: 1px solid #e5e7eb; margin: 20px 0;" />
+            <p style="color: #666; font-size: 14px;">Esta es una solicitud rápida desde el formulario de inicio.</p>
+          </div>
+        `,
+      });
+    } catch (emailError) {
+      console.error("Error enviando notificación al equipo:", emailError);
     }
 
     return {
