@@ -1,5 +1,6 @@
 import FadeIn from "@/components/ui/animation/FadeIn";
 import DashboardCard from "./powerbi/DashboardCard";
+import DashboardSearch from "./powerbi/DashboardSearch";
 import { getAllDashboards } from "@/app/actions/dashboards";
 
 export default async function CordobaEnDatosSection() {
@@ -20,20 +21,8 @@ export default async function CordobaEnDatosSection() {
           </p>
         </div>
 
-        {/* Grid de dashboards */}
-        {dashboards.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8">
-            {dashboards.map((dashboard) => (
-              <DashboardCard key={Number(dashboard.id)} dashboard={dashboard} />
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-12 text-center dark:border-neutral-800 dark:bg-neutral-900">
-            <p className="text-neutral-600 dark:text-neutral-400">
-              No hay dashboards disponibles en este momento.
-            </p>
-          </div>
-        )}
+        {/* Buscador */}
+        {dashboards.length > 0 && <DashboardSearch dashboards={dashboards} />}
       </section>
     </FadeIn>
   );
