@@ -12,7 +12,7 @@ export default function PowerBIEmbed({ embedUrl, title }: PowerBIEmbedProps) {
     : `${embedUrl}?filterPaneEnabled=false&navContentPaneEnabled=true`;
 
   return (
-    <div className="relative w-full overflow-hidden rounded-2xl border-2 border-neutral-200 shadow-xl">
+    <div className="relative w-full overflow-hidden rounded-lg border border-neutral-300 shadow-inner">
       {/* Contenedor con aspect ratio 16:9 */}
       <div className="relative w-full bg-neutral-50" style={{ paddingBottom: "56.25%" }}>
         <iframe

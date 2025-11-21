@@ -12,7 +12,7 @@ export default function DashboardCard({ dashboard }: DashboardCardProps) {
   return (
     <Link
       href={`/cordoba-en-datos/${dashboard.id}`}
-      className="group block overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm transition-all hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+      className="group block overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-inner transition-all hover:shadow-lg dark:border-neutral-800 dark:bg-neutral-900"
     >
       {/* Imagen o placeholder */}
       <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-neutral-100 to-neutral-50 dark:from-neutral-800 dark:to-neutral-900">
