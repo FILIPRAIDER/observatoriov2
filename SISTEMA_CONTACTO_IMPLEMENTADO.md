@@ -58,7 +58,23 @@ RESEND_API_KEY=re_fFa4oYdc_J7y3ojSRVWqBBLWrGPBRgRUC
 CONTACT_EMAIL=observatorio@ucc.edu.co
 ```
 
-**Nota:** Cambia `CONTACT_EMAIL` por el correo real del equipo del Observatorio donde quieres recibir los mensajes de contacto.
+### ⚠️ IMPORTANTE sobre CONTACT_EMAIL
+
+**Este email puede ser CUALQUIER email válido** (Gmail, Hotmail, Yahoo, etc.). No tiene que ser del dominio que tengas en Resend.
+
+**¿Por qué?**
+- `CONTACT_EMAIL` es el **destinatario** (donde llegarán los mensajes)
+- El dominio de Resend (`equipos.online`) es el **remitente** (desde donde se envían)
+
+**Ejemplos válidos:**
+```env
+CONTACT_EMAIL=observatorio@ucc.edu.co
+CONTACT_EMAIL=equipoobservatorio@gmail.com
+CONTACT_EMAIL=contacto@equipos.online
+CONTACT_EMAIL=tu_email_personal@hotmail.com
+```
+
+**Recomendación:** Usa el email institucional donde el equipo revisa correos regularmente (ej: `observatorio@ucc.edu.co` o un Gmail compartido del equipo).
 
 ---
 
@@ -184,8 +200,29 @@ Los emails incluyen:
 
 ---
 
-## 🔒 Seguridad
+## 🔒 Seguridad y Protección Anti-Spam
 
+### Rate Limiting Implementado ✅
+
+Para evitar bombardeo de peticiones, se implementó un sistema de rate limiting:
+
+**Newsletter (ContactCta):**
+- ✅ Máximo 3 intentos cada 15 minutos por email
+- ✅ Mensaje de error claro con tiempo de espera
+
+**Formulario de Contacto:**
+- ✅ Máximo 5 intentos cada 30 minutos por email
+- ✅ Bloqueo temporal automático
+
+**Características:**
+- Rate limit por email (no por IP) para mayor precisión
+- Sistema en memoria (suficiente para cargas normales)
+- Auto-limpieza de entradas expiradas
+- Mensajes amigables: "Intenta nuevamente en X minutos"
+
+**Para producción a gran escala:** Considera migrar a Redis o Upstash para rate limiting persistente entre instancias serverless.
+
+### Otras Validaciones
 - ✅ Validación de emails (formato @)
 - ✅ Validación de campos requeridos
 - ✅ Protección contra duplicados en newsletter

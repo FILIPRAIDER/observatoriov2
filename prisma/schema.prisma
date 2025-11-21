@@ -234,11 +234,11 @@ model contact_messages {
   phone      String?   @db.VarChar(50)
   service    String?   @db.VarChar(255)
   message    String    @db.Text
-  read       Boolean   @default(false)
+  is_read    Boolean   @default(false) @map("read")
   created_at DateTime? @default(now()) @db.Timestamp(0)
   updated_at DateTime? @db.Timestamp(0)
 
   @@index([email], map: "contact_messages_email_index")
-  @@index([read], map: "contact_messages_read_index")
+  @@index([is_read], map: "contact_messages_read_index")
   @@index([created_at], map: "contact_messages_created_at_index")
 }

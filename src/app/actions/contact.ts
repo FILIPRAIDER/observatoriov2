@@ -7,6 +7,11 @@ import {
   ContactMessageEmail,
   ContactConfirmationEmail,
 } from "@/lib/email-templates";
+import {
+  newsletterLimiter,
+  contactLimiter,
+  getRemainingTime,
+} from "@/lib/rate-limit";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const CONTACT_EMAIL = process.env.CONTACT_EMAIL || "observatorio@ucc.edu.co";
@@ -34,6 +39,17 @@ export async function subscribeToNewsletter(
       return {
         success: false,
         message: "Por favor ingresa un correo válido",
+      };
+    }
+
+    // Rate limiting por email
+    const rateLimitCheck = newsletterLimiter.check(email.toLowerCase());
+    if (!rateLimitCheck.allowed) {
+      return {
+        success: false,
+        message: `Demasiados intentos. Intenta nuevamente en ${getRemainingTime(
+          rateLimitCheck.resetTime
+        )}.`,
       };
     }
 
@@ -122,6 +138,17 @@ export async function sendContactMessage(
       };
     }
 
+    // Rate limiting por email
+    const rateLimitCheck = contactLimiter.check(data.email.toLowerCase());
+    if (!rateLimitCheck.allowed) {
+      return {
+        success: false,
+        message: `Demasiados intentos. Intenta nuevamente en ${getRemainingTime(
+          rateLimitCheck.resetTime
+        )}.`,
+      };
+    }
+
     // Guardar en base de datos
     await prisma.contact_messages.create({
       data: {
@@ -130,7 +157,7 @@ export async function sendContactMessage(
         phone: data.phone || null,
         service: data.service || null,
         message: data.message,
-        read: false,
+        is_read: false,
       },
     });
 
