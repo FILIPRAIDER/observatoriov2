@@ -10,7 +10,7 @@ export default function WhoWeAre() {
             ¿Quiénes Somos?
           </h2>
 
-          <p className="mt-4 text-base sm:text-lg leading-relaxed text-gray-700 max-w-[60ch]">
+          <p className="mt-4 text-base sm:text-md leading-relaxed text-gray-700 max-w-[60ch]">
             El Observatorio de la Educación en Córdoba es un espacio de
             análisis, interpretación, reflexión y articulación sobre los
             principales indicadores y políticas públicas del sistema educativo

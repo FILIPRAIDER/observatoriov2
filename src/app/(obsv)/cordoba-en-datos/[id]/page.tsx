@@ -1,8 +1,13 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getDashboardById } from "@/app/actions/dashboards";
+import { getDashboardById, getAllDashboards } from "@/app/actions/dashboards";
 import PowerBIEmbed from "@/components/cordoba/powerbi/PowerBIEmbed";
+import DashboardNavigation from "@/components/cordoba/powerbi/DashboardNavigation";
 import FadeIn from "@/components/ui/animation/FadeIn";
+
+// Deshabilitar generación estática
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function DashboardPage({
   params,
@@ -11,6 +16,7 @@ export default async function DashboardPage({
 }) {
   const { id } = await params;
   const dashboard = await getDashboardById(parseInt(id));
+  const allDashboards = await getAllDashboards();
 
   if (!dashboard) {
     notFound();
@@ -49,6 +55,12 @@ export default async function DashboardPage({
           )}
         </div>
 
+        {/* Navegación entre dashboards */}
+        <DashboardNavigation
+          dashboards={allDashboards}
+          currentDashboardId={id}
+        />
+
         {/* Dashboard embebido */}
         <PowerBIEmbed embedUrl={dashboard.embed_url} title={dashboard.name} />
 
@@ -56,7 +68,7 @@ export default async function DashboardPage({
         <div className="mt-8">
           <Link
             href="/cordoba-en-datos"
-            className="inline-flex items-center text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors dark:text-emerald-400 dark:hover:text-emerald-300"
+            className="inline-flex items-center text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
           >
             <svg
               className="mr-2 h-4 w-4"
@@ -78,6 +90,3 @@ export default async function DashboardPage({
     </FadeIn>
   );
 }
-
-// Configuración de ISR (Incremental Static Regeneration)
-export const revalidate = 3600; // Revalidar cada hora
