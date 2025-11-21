@@ -31,12 +31,9 @@ function ContactForm({ cardClass, inputClass }: { cardClass: string; inputClass:
     }
 
     setIsSubmitting(true);
-    const loadingToast = toast.loading("Enviando mensaje...");
 
     try {
       const result = await sendContactMessage(data);
-      
-      toast.dismiss(loadingToast);
 
       if (result.success) {
         toast.success(result.message, {
@@ -47,7 +44,6 @@ function ContactForm({ cardClass, inputClass }: { cardClass: string; inputClass:
         toast.error(result.message);
       }
     } catch (error) {
-      toast.dismiss(loadingToast);
       toast.error("Hubo un error al enviar tu mensaje. Intenta nuevamente.");
       console.error(error);
     } finally {

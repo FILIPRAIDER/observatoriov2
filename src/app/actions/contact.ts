@@ -62,17 +62,17 @@ export async function subscribeToNewsletter(
       if (existing.subscribed) {
         return {
           success: false,
-          message: "Este correo ya está suscrito",
+          message: "Ya hemos recibido tu solicitud anteriormente",
         };
       } else {
-        // Reactivar suscripción
+        // Reactivar solicitud
         await prisma.newsletter_subscribers.update({
           where: { email },
           data: { subscribed: true, name },
         });
       }
     } else {
-      // Crear nuevo suscriptor
+      // Crear nueva solicitud
       await prisma.newsletter_subscribers.create({
         data: { name, email, subscribed: true },
       });
@@ -93,7 +93,7 @@ export async function subscribeToNewsletter(
 
     return {
       success: true,
-      message: "¡Gracias por suscribirte! Te hemos enviado un correo de confirmación.",
+      message: "¡Solicitud enviada! Nos pondremos en contacto contigo pronto.",
     };
   } catch (error) {
     console.error("Error en subscribeToNewsletter:", error);

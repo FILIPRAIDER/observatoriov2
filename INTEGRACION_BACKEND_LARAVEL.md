@@ -9,7 +9,14 @@ Se han agregado **2 nuevas tablas** a la base de datos MySQL para gestionar los 
 ## 1. Tabla: `newsletter_subscribers`
 
 ### Descripción
-Almacena las suscripciones al newsletter desde el formulario de la home page (ContactCta).
+**SOLICITUDES DE CONTACTO RÁPIDAS** - Formulario simple en la parte superior de la home que solo pide nombre y correo.
+
+**Ubicación en el sitio:** Primera sección de la home, arriba del hero, con el texto:
+*"¿Necesitas información para tomar decisiones en tu institución?"*
+
+**Propósito:** Capturar leads rápidos de instituciones interesadas en servicios del Observatorio (estudios, diagnósticos, asesoría).
+
+**Campos:** Solo nombre y email (formulario minimalista para facilitar conversión).
 
 ### Estructura de la Tabla
 ```sql
@@ -29,11 +36,13 @@ CREATE TABLE `newsletter_subscribers` (
 
 ### Campos
 - **id**: ID único autoincremental
-- **name**: Nombre completo del suscriptor
-- **email**: Email del suscriptor (único)
-- **subscribed**: Estado de suscripción (true = activo, false = cancelado)
-- **created_at**: Fecha de suscripción
+- **name**: Nombre completo del contacto
+- **email**: Email del contacto (único - no permite duplicados)
+- **subscribed**: Estado (true = activo, false = contactado/inactivo) - útil para marcar como procesado
+- **created_at**: Fecha de la solicitud
 - **updated_at**: Fecha de última actualización
+
+**✅ Solo estos 5 campos** - Es un formulario minimalista para captura rápida de leads
 
 ### Modelo Laravel Sugerido
 ```php
@@ -84,9 +93,11 @@ use Filament\Tables;
 class NewsletterSubscriberResource extends Resource
 {
     protected static ?string $model = NewsletterSubscriber::class;
-    protected static ?string $navigationIcon = 'heroicon-o-envelope';
-    protected static ?string $navigationLabel = 'Suscriptores';
+    protected static ?string $navigationIcon = 'heroicon-o-user-plus';
+    protected static ?string $navigationLabel = 'Solicitudes Rápidas';
     protected static ?string $navigationGroup = 'Contacto';
+    protected static ?string $modelLabel = 'Solicitud';
+    protected static ?string $pluralModelLabel = 'Solicitudes Rápidas';
 
     public static function form(Forms\Form $form): Forms\Form
     {
@@ -103,7 +114,8 @@ class NewsletterSubscriberResource extends Resource
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
                 Forms\Components\Toggle::make('subscribed')
-                    ->label('Activo')
+                    ->label('Activo / Pendiente')
+                    ->helperText('Desactivar cuando ya se haya contactado')
                     ->default(true),
             ]);
     }
@@ -122,10 +134,14 @@ class NewsletterSubscriberResource extends Resource
                     ->sortable()
                     ->copyable(),
                 Tables\Columns\BooleanColumn::make('subscribed')
-                    ->label('Activo')
+                    ->label('Pendiente')
+                    ->trueColor('warning')
+                    ->falseColor('success')
+                    ->trueIcon('heroicon-o-clock')
+                    ->falseIcon('heroicon-o-check-circle')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Fecha de suscripción')
+                    ->label('Fecha de solicitud')
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
             ])
@@ -133,8 +149,8 @@ class NewsletterSubscriberResource extends Resource
                 Tables\Filters\TernaryFilter::make('subscribed')
                     ->label('Estado')
                     ->placeholder('Todos')
-                    ->trueLabel('Activos')
-                    ->falseLabel('Inactivos'),
+                    ->trueLabel('Pendientes')
+                    ->falseLabel('Contactados'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -162,7 +178,13 @@ class NewsletterSubscriberResource extends Resource
 ## 2. Tabla: `contact_messages`
 
 ### Descripción
-Almacena los mensajes de contacto desde el formulario de la sección "Contáctanos".
+**FORMULARIO DE CONTACTO COMPLETO** - Formulario detallado en la sección "Contáctanos" con mapa.
+
+**Ubicación en el sitio:** Sección inferior de la home con mapa de ubicación y formulario completo.
+
+**Propósito:** Mensajes detallados de contacto con toda la información del interesado.
+
+**Campos:** Nombre, email, teléfono, servicio de interés, y mensaje completo.
 
 ### Estructura de la Tabla
 ```sql
@@ -453,6 +475,18 @@ Los emails se envían automáticamente con **Resend**:
 RESEND_API_KEY=re_fFa4oYdc_J7y3ojSRVWqBBLWrGPBRgRUC
 CONTACT_EMAIL=observatorio@ucc.edu.co
 ```
+
+---
+
+## 📊 Resumen de Diferencias
+
+| Característica | `newsletter_subscribers` | `contact_messages` |
+|---------------|-------------------------|-------------------|
+| **Ubicación** | Primera sección (hero) | Sección "Contáctanos" |
+| **Tipo** | Lead capture rápido | Mensaje detallado |
+| **Campos** | Solo nombre + email | Nombre, email, teléfono, servicio, mensaje |
+| **Propósito** | Solicitud de información | Contacto específico con contexto |
+| **Email enviado** | Bienvenida al solicitante | Al equipo + confirmación al usuario |
 
 ---
 

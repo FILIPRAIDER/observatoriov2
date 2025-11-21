@@ -22,12 +22,9 @@ export default function ContactCta() {
     }
 
     setIsSubmitting(true);
-    const loadingToast = toast.loading("Enviando...");
 
     try {
       const result = await subscribeToNewsletter(name, email);
-      
-      toast.dismiss(loadingToast);
 
       if (result.success) {
         toast.success(result.message, {
@@ -38,7 +35,6 @@ export default function ContactCta() {
         toast.error(result.message);
       }
     } catch (error) {
-      toast.dismiss(loadingToast);
       toast.error("Hubo un error al enviar tu información. Intenta nuevamente.");
       console.error(error);
     } finally {
