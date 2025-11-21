@@ -7,9 +7,10 @@ import FadeIn from "@/components/ui/animation/FadeIn";
 export default async function DashboardPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const dashboard = await getDashboardById(parseInt(params.id));
+  const { id } = await params;
+  const dashboard = await getDashboardById(parseInt(id));
 
   if (!dashboard) {
     notFound();

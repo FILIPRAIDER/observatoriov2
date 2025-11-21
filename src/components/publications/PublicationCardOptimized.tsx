@@ -5,7 +5,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 interface PublicationCardProps {
-  id: string;
   title: string;
   excerpt: string;
   tag: string;
@@ -19,7 +18,6 @@ interface PublicationCardProps {
 }
 
 export default function PublicationCard({
-  id,
   title,
   excerpt,
   tag,

@@ -69,7 +69,7 @@ export interface Image {
   alt: string | null;
   caption: string | null;
   sort_order: number;
-  metadata: any;
+  metadata: Record<string, unknown> | null;
   created_at: Date | null;
   updated_at: Date | null;
 }

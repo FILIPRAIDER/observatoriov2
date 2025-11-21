@@ -25,7 +25,7 @@ export const getAllDashboards = cache(async (): Promise<Dashboard[]> => {
  * Obtiene dashboards filtrados por categoría
  */
 export const getDashboardsByCategory = cache(
-  async (category: string): Promise<Dashboard[]> => {
+  async (category: "educacion" | "economia" | "demografia" | "infraestructura" | "salud" | "otro"): Promise<Dashboard[]> => {
     const dashboards = await prisma.powerbi_dashboards.findMany({
       where: {
         is_active: true,
